@@ -246,7 +246,7 @@ d3.csv("movies2.csv", function (error, data) {
 	  	.attr("r", 6 )
 	  	.style("fill", function(d) {
 	    	var returnColor = "blue";
-	    	if (d.percentage_female < .5) { returnColor = "blue";}
+	    	if (d.percentage_male > .5) { returnColor = "blue";}
 	    	else  { returnColor = "deeppink"; }
 	    	return returnColor;
 	  	})
@@ -270,7 +270,7 @@ function tooltipMouseover (d)
 
 	popupGross.text("$" + d.gross + "M Revenue");
 
-   	popupData.data([d.percentage_female,1-d.percentage_female]).enter();
+   	popupData.data([1-d.percentage_male,d.percentage_male]).enter();
 
    	popupData.select(".dataPercent")
         .text(function(d){
