@@ -1,0 +1,397 @@
+<html>
+<head>
+
+<!-- Load the d3 library. -->
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<style>
+svg { border: solid black 1px; }
+.axis path { fill: none; stroke: black;}
+.axis line { stroke: black; }
+text { font-size: small; font-family: "Open Sans", Calibri; opacity: 0.3; text-anchor: middle; dominant-baseline: central; }
+
+div.tooltip {   
+	position: absolute;           
+	text-align: center;           
+	width: 180px;                  
+	height: 130px;                 
+	padding: 2px;             
+	font: 10px sans-serif;        
+	background: white;   
+	border: 1px;      
+	border-radius: 3px; 
+	border-style: solid;          
+	pointer-events: none;}
+
+.dataBox {
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;}
+
+.dataRow{
+    display: flex;
+    left: 60px;
+    top: 60px;
+    height: 15px;
+    width: auto;}
+
+.dialogueLabel{
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 11px;
+    margin: 0px;
+    width: 90px;
+    text-align: right;
+    margin-right: 4px;}
+
+.nameLabel{
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 15px;
+    margin: 0px;
+    width: 180px;
+    text-align: middle;}
+
+.dataLabel{
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 15px;
+    margin: 0px;
+    width: 180px;
+    text-align: middle;}
+
+.dataBar {
+    height: 10px;}
+
+.dataPercent{
+	font-size: 10px;
+	color: black;
+	line-height: 10px;
+	margin: 0px;
+	font-weight: 500;
+	margin-left: 4px;}
+
+.crewLabel{
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 11px;
+    margin: 0px;
+    width: 60px;
+    text-align: right;
+    margin-right: 2px;}
+
+.dataCrewGender{
+	font-size: 9px;
+	line-height: 10px;
+	margin: 0px;
+	font-weight: 600;
+	margin-left: 0px;}
+
+
+</style>
+</head>
+<body>
+
+<div id = "points"></div>
+
+<script>
+
+//SVG test info
+
+var height = 600;
+var width = 800;
+var padding = 50;
+// var circles;
+// var points;
+
+
+var svg = d3.select("#points").append("svg")
+   .attr("height", height).attr("width", width);
+
+var xScale = d3.scale.linear()
+  .domain([600, 10000]).range([padding, width - padding]);
+  
+var yScale = d3.scale.linear()
+  .domain([600, 10000]).range([height - padding, padding]);
+
+
+//Popup Things
+
+var popupBox = d3.select("body").append("div")   
+    	.attr("class", "tooltip");
+
+var dataBarScale = d3.scale.linear().domain([0,1]).range([0,50]);
+
+var dialogueArray = [0.5,0.6];
+
+var popupName = popupBox.append("p")
+    .attr("class","nameLabel")
+    .text(function(){return "";});
+
+var popupYear = popupBox.append("p")
+    .attr("class","dataLabel")
+    .text(function(d){return 1;
+    });
+
+var popupGross = popupBox.append("p")
+    .attr("class","dataLabel")
+    .text(function(d){return 1;
+    });
+
+var popupData = popupBox
+    .append("div")
+    .attr("class","dataBox") 
+    .selectAll("div")
+    .data(dialogueArray,function(d){
+      	return d;
+    	})
+    .enter()
+    .append("div")
+    .attr("class","dataRow");
+
+
+var popupDialogueDataLabel = popupData.append("p")
+    .attr("class","dialogueLabel")
+    .text(function(d,i){
+      if(i==0){
+        return "Female Dialogue:";
+      }
+      return "Male Dialogue:";
+    });
+
+
+var popupDataBar = popupData.append("div")
+    .attr("class","dataBar")
+    .style("width",function(d){
+        return dataBarScale(d) + "px";
+        })
+    .style("background-color",function(d,i){
+        if (i==0){
+          return "deeppink";
+        }
+          return "blue";
+        });
+
+
+var percentFormat = d3.format(".0%");
+
+var popupPercent = popupData.append("p")
+    .attr("class","dataPercent")
+    .text(function(d){
+      return percentFormat(d);
+    });
+
+var crewArray = ["f","f","f"];
+
+var popupCrew = popupBox
+    .append("div")
+    .attr("class","dataBox") 
+    .selectAll("div")
+    .data(crewArray,function(d){
+      	return d;
+    	})
+    .enter()
+    .append("div")
+    .attr("class","dataRow");
+
+// var popupCrewLabel = popupCrew.append("p")
+//     .attr("class","crewLabel")
+//     .text(function(d,i){
+//       if(i==0){
+//         return "Writer: ";
+//       }
+//       else if(i ==1) {
+//       	return "Director: ";
+//       }
+//       return "Producer: ";
+//     });
+
+var popupWriterLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Writer: ");
+
+var popupWriter = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+var popupDirectorLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Director: ");
+
+var popupDirector = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+var popupProducerLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Producer: ");
+
+var popupProducer = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+// var popupCrewGender = popupCrew.append("p")
+//     .attr("class","dataCrewGender")
+//     .text(function(d){
+//       return d;
+//     });
+
+d3.csv("movies2.csv", function (error, data) {
+
+	svg.selectAll("circle").data(data).enter()
+		.append("circle")
+		.attr("cx", function(d){ return xScale(d.script_id);})
+	  	.attr("cy", function(d){ return Math.random()*600})
+	  	.attr("r", 6 )
+	  	.style("fill", function(d) {
+	    	var returnColor = "blue";
+	    	if (d.percentage_female < .5) { returnColor = "blue";}
+	    	else  { returnColor = "deeppink"; }
+	    	return returnColor;
+	  	})
+		.on("mouseover", function(d) {
+			d3.select(this).style("stroke","black");
+            tooltipMouseover(d);
+
+        })               
+	  	.on("mouseout", function(d) {  
+	  		d3.select(this).style("stroke",null);     
+	    	popupBox.transition().duration(500).style("opacity", 0);   
+	  	});
+	});
+
+
+function tooltipMouseover (d)
+{
+	popupName.text(d.title);
+
+	popupYear.text(d.year);
+
+	popupGross.text("$" + d.gross + "M Revenue");
+
+   	popupData.data([d.percentage_female,1-d.percentage_female]).enter();
+
+   	popupData.select(".dataPercent")
+        .text(function(d){
+          return percentFormat(d);
+        });
+	
+	popupData.select(".dataBar")
+        .transition()
+        .duration(200)
+        .style("width",function(d){
+          return dataBarScale(d) + "px";
+        });
+
+    popupWriter.text(d.writer)
+    	.style("text-transform", "uppercase")
+    	.style("color", function (){
+    		if(d.writer == "m") {return "blue";}
+    		return "deeppink";
+    	});
+
+    popupDirector.text(d.director)
+    	.style("text-transform", "uppercase")
+    	.style("color", function(){
+    		if(d.director == "m") {return "blue";}
+    		return "deeppink";
+    	});
+	popupProducer.text(d.producer)
+		.style("text-transform", "uppercase")
+    	.style("color", function(){
+    		if(d.producer == "m") {return "blue";}
+    		return "deeppink";
+    	});
+
+    // popupCrew.data([d.writer, d.director, d.producer]).enter();
+
+   	// popupCrew.select(".dataCrewGender")
+    //     .text(function(d){
+    //     	if(d == "m"){return "M";}
+    //     	return "F";})
+    //     .style("color", function(d)
+    //     	{
+    //     		if(d == "m") {return "blue";}
+    //     		return "deeppink";
+    //     	});
+
+	popupBox.transition()
+        .duration(150)
+        .style("opacity", .95);
+
+            
+    // tooltip.html(
+    //     "<br><b>"+d.title+"</b></br><br>"+
+    //       "Year: <b>"+d.year +"</b><br>"+
+    //       "Gross Revenue: <b> $"+d.gross+"M</b><br>") 
+    //          .style("left", (d3.event.pageX + 10) + "px")
+    //          .style("top", (d3.event.pageY - 20)+ "px");
+
+    popupBox.style("left", (d3.event.pageX + 10) + "px")
+            .style("top", (d3.event.pageY - 20)+ "px");
+
+
+}
+
+
+
+
+	//circles = svg.selectAll(".point").data(popupData);
+
+	// var tooltip = d3.select("#points").append("div")
+	//         .attr("class", "tooltip")
+	//         .style("opacity", 0);
+
+ //        svg.selectAll("circle").data(data).enter()
+ //          .append("circle")
+ //          .attr("class", "circle")
+ //          .attr("cx", xScale(Math.random()*10))
+ //          .attr("cy", yScale(Math.random()*10))
+ //          .attr("r", 6)
+ //          .attr("fill", '#ff6378')
+ //          .attr("opacity", '.7')
+ //          .on("mouseover", function(d) {
+ //            tooltip.transition()
+ //                  .duration(150)
+ //                  .style("opacity", .7);
+ //            tooltip.html(
+ //              "<b>"+d.title+"</b></br>"+
+ //              "Year: <b>"+d.year +"</b><br>"+
+ //              "Gross Revenue: <b>"+d.year+"</b>"
+ //              )
+ //                  .style("left", (d3.select(this).attr("cx") + 10) + "px")
+ //                  .style("top", (d3.select(this).attr("cy") - 20) + "px");
+ //        })
+ //        .on("mouseout", function(d) {
+ //            tooltip.transition()
+ //            .duration(500)
+ //            .style("opacity", 0);
+ //        });
+	
+
+
+
+
+
+//extra
+	// for(var d = 0; d < totalMovies; d++)
+	// {
+	// 	popupData[d] = {
+	// 		imdb: data[d]['script_id'],
+	// 		title: data[d]['title'],
+	// 		year: data[d]['year'],
+	// 		gross: data[d]['gross'],
+	// 		writer: data[d]['writer'],
+	// 		producer: data[d]['producer'],
+	// 		director: data[d]['director'],
+	// 		pFemale: data[d]['percentage female'],
+	// 		pMale: data[d]['percentage male']
+	// 	}
+	// }
+
+
+
+</script>
+</body>
+</html>
