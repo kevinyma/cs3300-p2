@@ -44,7 +44,6 @@
 		data = d3.map(rows, function(row) {
 			return row.script_id;
 		});
-
 		rows.forEach(function (line) {
 			if (line.percentage_male >0.5){
 				men.push(line.script_id);
@@ -54,25 +53,36 @@
 			}
 		})
 
-		function filterWomenYear(year){
-			women.forEach(function(id) {
+		function filterYear(year,array){
+			activeArray =[];
+			array.forEach(function(id) {
 				if (data._[id].year==year){
-					activeWomen.push(id);
+					activeArray.push(id);
 				}
 			});
-			return activeWomen
+			return activeArray
 		}
-		function filterMenYear(year){
-			men.forEach(function(id){
-				if (data._[id].year==year){
-					activeMen.push(id);
+
+		function filterRoleByGender(role,gender,array){
+			activeArray=[];
+			array.forEach(function (id) {
+				if (data._[id][role]==gender){
+					activeArray.push(id);
 				}
-			});
-			return activeMen;
+			})
+			return activeArray;
 		}
 
 		plotPiChart(men,women);
-		plotPiChart(filterMenYear(2014),filterWomenYear(2014));
+		
+		// activeMen = filterYear(2014,men);
+		// activeWomen = filterYear(2014,women);
+		// plotPiChart(activeMen,activeWomen);
+
+		activeMen = filterRoleByGender("producer", "f", men);
+		activeWomen = filterRoleByGender("producer", "f", women);
+		plotPiChart(activeMen,activeWomen);
+
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women){
 			var Radius = Math.sqrt(((men.length+women.length)*45+144*Math.sqrt(men.length+women.length))); //size of Pi Chart
