@@ -32,16 +32,20 @@
 	<h1>Project 2</h2>
 	<div id="plot"/>
 	<script>
-	var width = 800;
-	var height = 800;
+	var width = 900;
+	var height = 900;
 	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
-	// women = [1,3,4,5,6,7,9,2,3,4,5,6,7,9,10,11,12,14,13];
-	// men = [4,2,5,6,7,8,9,10,11,12,13,15,18,20,24,26,19,20,30,41];
+	women = [];
+	men = [];
+	activeWomen = [];
+	activeMen = [];
 
-	var men = [];
-	var women = [];
-	d3.csv("movies2.csv", function(error, data) {
-		data.forEach(function (line) {
+	d3.csv("movies2.csv", function(error, rows) {
+		data = d3.map(rows, function(row) {
+			return row.script_id;
+		});
+
+		rows.forEach(function (line) {
 			if (line.percentage_male >0.5){
 				men.push(line.script_id);
 			}
@@ -49,127 +53,143 @@
 				women.push(line.script_id);
 			}
 		})
-	})
 
-
-	//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
-	function plotPiChart(men, women){
-		var Radius = 300; //size of Pi Chart
-		var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
-		svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "black");
-		svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
-		// line dependent on Theta
-		svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
-
-		var wfill = false;
-		var r = 5; //size of data points
-		var padding = 1;
-		var wx = r+padding;
-		var wy = r+padding;
-		var wcount = women.length;
-		//plots all points where women have more speaking parts
-		while (wcount>0){
-			var d = r+padding;
-			if (Theta<Math.PI){
-				wx=(1/Math.tan(Theta))*(wy)+(1/Math.sin(Theta))*(r+padding);
-				if (wy+r+padding<Radius && (wx+r)*(wx+r)+(wy+r)*(wy+r)>Radius*Radius){
-					wx = r+padding;
-					wfill = true;
+		function filterWomenYear(year){
+			women.forEach(function(id) {
+				if (data._[id].year==year){
+					activeWomen.push(id);
 				}
-				while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
-					if (wcount==0){
-						break;
+			});
+			return activeWomen
+		}
+		function filterMenYear(year){
+			men.forEach(function(id){
+				if (data._[id].year==year){
+					activeMen.push(id);
+				}
+			});
+			return activeMen;
+		}
+
+		plotPiChart(men,women);
+		plotPiChart(filterMenYear(2014),filterWomenYear(2014));
+		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
+		function plotPiChart(men, women){
+			var Radius = Math.sqrt(((men.length+women.length)*45+144*Math.sqrt(men.length+women.length))); //size of Pi Chart
+			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
+			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "black");
+			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
+			// line dependent on Theta
+			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
+
+			var wfill = false;
+			var r = 5; //size of data points
+			var padding = 1;
+			var wx = r+padding;
+			var wy = r+padding;
+			var wcount = women.length;
+			//plots all points where women have more speaking parts
+			while (wcount>0){
+				var d = r+padding;
+				if (Theta<Math.PI){
+					wx=(1/Math.tan(Theta))*(wy)+(1/Math.sin(Theta))*(r+padding);
+					if (wy+r+padding<Radius && (wx+r)*(wx+r)+(wy+r)*(wy+r)>Radius*Radius){
+						wx = r+padding;
+						wfill = true;
 					}
-					if (wfill){
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("stroke", "blue");
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						if (wfill){
+							svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+							wcount-=1;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
 						wcount-=1;
+						wx+=(r+padding)*2;
 					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("stroke", "blue");
-					wcount-=1;
-					wx+=(r+padding)*2;
-				}
+						wy+=(r+padding)*2;
+					}
+				else{
+					wx2 = (1/Math.tan(Theta))*(wy)-(1/Math.sin(Theta))*(r+padding);
+					while((wx2+r)*(wx2+r)+(wy+r)*(wy+r)<Radius*Radius && wy>Math.sin(Theta)*Radius){
+						if (wcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "blue");
+						wcount-=1;
+						wx2+=(r+padding)*2;
+					}
+					wx2=r+padding;				
+					wx=r+padding;
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+						wcount-=2;
+						wx+=(r+padding)*2;
+					}
 					wy+=(r+padding)*2;
+					wx=r+padding;
 				}
-			else{
-				wx2 = (1/Math.tan(Theta))*(wy)-(1/Math.sin(Theta))*(r+padding);
-				while((wx2+r)*(wx2+r)+(wy+r)*(wy+r)<Radius*Radius && wy>Math.sin(Theta)*Radius){
-					if (wcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("stroke", "blue");
-					wcount-=1;
-					wx2+=(r+padding)*2;
-				}
-				wx2=r+padding;				
-				wx=r+padding;
-				while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
-					if (wcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("stroke", "blue");
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("stroke", "blue");
-					wcount-=2;
-					wx+=(r+padding)*2;
-				}
-				wy+=(r+padding)*2;
-				wx=r+padding;
 			}
-		}
-		var mfill = false;
-		var mx = r+padding;
-		var my = r+padding;
-		var mcount = men.length;
-		var Theta2 = Math.PI*2-Theta;
-		// plots all points where men have more speaking parts
-		while (mcount>0){
-			if (Theta2<Math.PI){
-				mx=(1/Math.tan(Theta2))*(my)+(1/Math.sin(Theta2))*(r+padding);
-				if (my+r+padding<Radius && (mx+r)*(mx+r)+(my+r)*(my+r)>Radius*Radius){
-					mx = r+padding;
-					mfill = true;
-				}
-				while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
-					if (mcount==0){
-						break;
+			var mfill = false;
+			var mx = r+padding;
+			var my = r+padding;
+			var mcount = men.length;
+			var Theta2 = Math.PI*2-Theta;
+			// plots all points where men have more speaking parts
+			while (mcount>0){
+				if (Theta2<Math.PI){
+					mx=(1/Math.tan(Theta2))*(my)+(1/Math.sin(Theta2))*(r+padding);
+					if (my+r+padding<Radius && (mx+r)*(mx+r)+(my+r)*(my+r)>Radius*Radius){
+						mx = r+padding;
+						mfill = true;
 					}
-					if (mfill){
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("stroke", "red");
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						if (mfill){
+							svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+							mcount-=1;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
 						mcount-=1;
+						mx+=(r+padding)*2;
 					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("stroke", "red");
-					mcount-=1;
-					mx+=(r+padding)*2;
-				}
+						my+=(r+padding)*2;
+					}
+				else{
+					mx2 = (1/Math.tan(Theta2))*(my)-(1/Math.sin(Theta2))*(r+padding);
+					while((mx2+r)*(mx2+r)+(my+r)*(my+r)<Radius*Radius && my<Math.sin(Theta)*Radius){
+						if (mcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "red");
+						mcount-=1;
+						mx2+=(r+padding)*2;
+					}
+					mx2=r+padding;				
+					mx=r+padding;
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+						mcount-=2;
+						mx+=(r+padding)*2;
+					}
 					my+=(r+padding)*2;
+					mx=r+padding;
 				}
-			else{
-				mx2 = (1/Math.tan(Theta2))*(my)-(1/Math.sin(Theta2))*(r+padding);
-				while((mx2+r)*(mx2+r)+(my+r)*(my+r)<Radius*Radius && my<Math.sin(Theta)*Radius){
-					if (mcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("stroke", "red");
-					mcount-=1;
-					mx2+=(r+padding)*2;
-				}
-				mx2=r+padding;				
-				mx=r+padding;
-				while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
-					if (mcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("stroke", "red");
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("stroke", "red");
-					mcount-=2;
-					mx+=(r+padding)*2;
-				}
-				my+=(r+padding)*2;
-				mx=r+padding;
 			}
 		}
-	}
-
-	plotPiChart(men, women);
+	})
 	</script>
 
 </body>
