@@ -91,7 +91,6 @@
 		activeWomen = filterRoleByGender("producer", "f", women);
 		plotPiChart(activeMen,activeWomen);
 
-
 		$('.filter').click( function() {
 			//add style to active button, remove from
 			$(this).siblings().removeClass('active');
@@ -103,7 +102,7 @@
 
 	    	activeMen = filterRoleByGender(role, gender, activeMen);
 			activeWomen = filterRoleByGender(role, gender, activeWomen);
-			//plotPiChart(activeMen,activeWomen);
+			// plotPiChart(activeMen,activeWomen);
 			});
 
 
