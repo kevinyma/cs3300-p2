@@ -2,38 +2,46 @@
 <html>
 
 <head>
-  <title>
-  	CS3300-P2 Visualization
-  </title>
-  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<style>
-		body { font-family: "Source Sans Pro"; 
-			margin: 50px; 
-			}
-		.axis path,
-		.axis line {
-			fill: none;
-			stroke: none;
-			shape-rendering: crispEdges;
-		}
-		.axis { 
-			font-size: .7em;
-		}
-		text {
-			font-size: 0.5rem;
-		}
-		.title {
-			font-size: 1rem;
-		}
-	</style>
+ 	<title>
+		CS3300 - Project 2
+	</title>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<link rel='stylesheet' type="text/css" href="css/style.css">
+	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
 </head>
 <body>
-	<h1>Project 2</h2>
+	<h2>Project 2</h2>
+	<div class="all-filters">
+		<div class="filter-group">
+			<p class="filter-label">Director</p>
+			<p id="director-both" class="filter front-curve active">Both Genders</p>
+			<p id="director-male" class="filter">Male</p>
+			<p id="director-female" class="filter back-curve ">Female</p>
+		</div>
+
+		<div class="filter-group producer-filter">
+			<p class="filter-label">Producer</p>
+			<p id="producer-both" class="filter front-curve active">Both Genders</p>
+			<p id="producer-male" class="filter">Male</p>
+			<p id="producer-female" class="filter back-curve">Female</p>
+		</div>
+
+		<div class="filter-group writer-filter">
+			<p class="filter-label">Writer</p>
+			<p id="writer-both" class="filter front-curve active">Both Genders</p>
+			<p id="writer-male" class="filter">Male</p>
+			<p id="writer-female" class="filter back-curve">Female</p>
+		</div>
+	</div>
 	<div id="plot"/>
 	<script>
-	var width = 900;
-	var height = 900;
+
+	
+
+	var width = 1000;
+	var height = 500;
 	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
 	women = [];
 	men = [];
@@ -82,6 +90,22 @@
 		activeMen = filterRoleByGender("producer", "f", men);
 		activeWomen = filterRoleByGender("producer", "f", women);
 		plotPiChart(activeMen,activeWomen);
+
+
+		$('.filter').click( function() {
+			//add style to active button, remove from
+			$(this).siblings().removeClass('active');
+	    	$(this).addClass('active');
+	    	var data =  $(this).attr('id');
+	    	var dataArray = data.split("-");
+	    	var role = dataArray[0];
+	    	var gender = dataArray[1];
+
+	    	activeMen = filterRoleByGender(role, gender, activeMen);
+			activeWomen = filterRoleByGender(role, gender, activeWomen);
+			//plotPiChart(activeMen,activeWomen);
+			});
+
 
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women){
