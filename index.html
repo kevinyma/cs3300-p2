@@ -12,33 +12,31 @@
 	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
 </head>
 <body>
-	<h2>Project 2</h2>
+	<h2>Key Creative Roles in Film</h2>
 	<div class="all-filters">
-		<div class="filter-group">
+		<div class="filter-group director-filter">
 			<p class="filter-label">Director</p>
-			<p id="director-both" class="filter front-curve active">Both Genders</p>
-			<p id="director-male" class="filter">Male</p>
-			<p id="director-female" class="filter back-curve ">Female</p>
+			<p id="d-all" class="filter front-curve active">All</p>
+			<p id="d-m" class="filter">Male</p>
+			<p id="d-f" class="filter back-curve">Female</p>
 		</div>
 
 		<div class="filter-group producer-filter">
 			<p class="filter-label">Producer</p>
-			<p id="producer-both" class="filter front-curve active">Both Genders</p>
-			<p id="producer-male" class="filter">Male</p>
-			<p id="producer-female" class="filter back-curve">Female</p>
+			<p id="p-all" class="filter front-curve active">All</p>
+			<p id="p-m" class="filter">Male</p>
+			<p id="p-f" class="filter back-curve">Female</p>
 		</div>
 
 		<div class="filter-group writer-filter">
 			<p class="filter-label">Writer</p>
-			<p id="writer-both" class="filter front-curve active">Both Genders</p>
-			<p id="writer-male" class="filter">Male</p>
-			<p id="writer-female" class="filter back-curve">Female</p>
+			<p id="w-all" class="filter front-curve active">All</p>
+			<p id="w-m" class="filter">Male</p>
+			<p id="w-f" class="filter back-curve">Female</p>
 		</div>
 	</div>
 	<div id="plot"/>
 	<script>
-
-	
 
 	var width = 1000;
 	var height = 500;
@@ -47,6 +45,11 @@
 	men = [];
 	activeWomen = [];
 	activeMen = [];
+	var filteredMen = [];
+	var filteredWomen = [];
+	var directorGender = 'all',
+		producerGender = 'all',
+		writerGender = 'all';
 
 	d3.csv("movies2.csv", function(error, rows) {
 		data = d3.map(rows, function(row) {
@@ -61,6 +64,8 @@
 			}
 		})
 
+		plotPiChart(men, women);
+
 		function filterYear(year,array){
 			activeArray =[];
 			array.forEach(function(id) {
@@ -68,7 +73,7 @@
 					activeArray.push(id);
 				}
 			});
-			return activeArray
+			return activeArray;
 		}
 
 		function filterRoleByGender(role,gender,array){
@@ -81,36 +86,50 @@
 			return activeArray;
 		}
 
-		plotPiChart(men,women);
-		
-		// activeMen = filterYear(2014,men);
-		// activeWomen = filterYear(2014,women);
-		// plotPiChart(activeMen,activeWomen);
+		//applys all filters and changes array values
+		function applyFilters(){
+			filteredMen = men;
+			filteredWomen = women;
+			if (directorGender!="all"){
+				filteredMen = filterRoleByGender("director", directorGender, filteredMen);
+				filteredWomen = filterRoleByGender("director", directorGender, filteredWomen);
+			}
+				console.log("success1");
+			if (producerGender!="all"){
+				filteredMen = filterRoleByGender("producer", producerGender, filteredMen);
+				filteredWomen = filterRoleByGender("producer", producerGender, filteredWomen);
+			}
+				console.log("success2");
 
-		activeMen = filterRoleByGender("producer", "f", men);
-		activeWomen = filterRoleByGender("producer", "f", women);
-		plotPiChart(activeMen,activeWomen);
+			if (writerGender!="all"){
+				filteredMen = filterRoleByGender("writer", writerGender, filteredMen);
+				filteredWomen = filterRoleByGender("writer", writerGender, filteredWomen);
+			}
+				console.log("success3");
+
+			d3.selectAll("svg > *").remove();
+			plotGreyPiChart(men,women);
+			plotPiChart(filteredMen,filteredWomen);
+
+		}
 
 		$('.filter').click( function() {
 			//add style to active button, remove from
 			$(this).siblings().removeClass('active');
 	    	$(this).addClass('active');
-	    	var data =  $(this).attr('id');
-	    	var dataArray = data.split("-");
-	    	var role = dataArray[0];
-	    	var gender = dataArray[1];
-
-	    	activeMen = filterRoleByGender(role, gender, activeMen);
-			activeWomen = filterRoleByGender(role, gender, activeWomen);
-			// plotPiChart(activeMen,activeWomen);
-			});
-
+	    	//assign active buttons to variables
+	  
+	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
+	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
+	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
+	    	applyFilters();
+		});
 
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women){
-			var Radius = Math.sqrt(((men.length+women.length)*45+144*Math.sqrt(men.length+women.length))); //size of Pi Chart
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
-			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "black");
+			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*12; //size of Pi Chart
+			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "rgba(0,0,0,.0)").style("stroke", "black");
 			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
 			// line dependent on Theta
 			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
@@ -222,6 +241,126 @@
 				}
 			}
 		}
+
+
+function plotGreyPiChart(men, women){
+			var Radius = Math.sqrt(((men.length+women.length)*45+144*Math.sqrt(men.length+women.length))); //size of Pi Chart
+			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
+			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "white");
+			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "white");
+			// line dependent on Theta
+			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "white");
+
+			var wfill = false;
+			var r = 5; //size of data points
+			var padding = 1;
+			var wx = r+padding;
+			var wy = r+padding;
+			var wcount = women.length;
+			//plots all points where women have more speaking parts
+			while (wcount>0){
+				var d = r+padding;
+				if (Theta<Math.PI){
+					wx=(1/Math.tan(Theta))*(wy)+(1/Math.sin(Theta))*(r+padding);
+					if (wy+r+padding<Radius && (wx+r)*(wx+r)+(wy+r)*(wy+r)>Radius*Radius){
+						wx = r+padding;
+						wfill = true;
+					}
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						if (wfill){
+							svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+							wcount-=1;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						wcount-=1;
+						wx+=(r+padding)*2;
+					}
+						wy+=(r+padding)*2;
+					}
+				else{
+					wx2 = (1/Math.tan(Theta))*(wy)-(1/Math.sin(Theta))*(r+padding);
+					while((wx2+r)*(wx2+r)+(wy+r)*(wy+r)<Radius*Radius && wy>Math.sin(Theta)*Radius){
+						if (wcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "rgba(0,0,0,.125)");
+						wcount-=1;
+						wx2+=(r+padding)*2;
+					}
+					wx2=r+padding;				
+					wx=r+padding;
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						wcount-=2;
+						wx+=(r+padding)*2;
+					}
+					wy+=(r+padding)*2;
+					wx=r+padding;
+				}
+			}
+			var mfill = false;
+			var mx = r+padding;
+			var my = r+padding;
+			var mcount = men.length;
+			var Theta2 = Math.PI*2-Theta;
+			// plots all points where men have more speaking parts
+			while (mcount>0){
+				if (Theta2<Math.PI){
+					mx=(1/Math.tan(Theta2))*(my)+(1/Math.sin(Theta2))*(r+padding);
+					if (my+r+padding<Radius && (mx+r)*(mx+r)+(my+r)*(my+r)>Radius*Radius){
+						mx = r+padding;
+						mfill = true;
+					}
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						if (mfill){
+							svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+							mcount-=1;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						mcount-=1;
+						mx+=(r+padding)*2;
+					}
+						my+=(r+padding)*2;
+					}
+				else{
+					mx2 = (1/Math.tan(Theta2))*(my)-(1/Math.sin(Theta2))*(r+padding);
+					while((mx2+r)*(mx2+r)+(my+r)*(my+r)<Radius*Radius && my<Math.sin(Theta)*Radius){
+						if (mcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "rgba(0,0,0,.125)");
+						mcount-=1;
+						mx2+=(r+padding)*2;
+					}
+					mx2=r+padding;				
+					mx=r+padding;
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						mcount-=2;
+						mx+=(r+padding)*2;
+					}
+					my+=(r+padding)*2;
+					mx=r+padding;
+				}
+			}
+		}
+
+
+
 	})
 	</script>
 
