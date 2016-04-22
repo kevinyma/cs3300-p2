@@ -128,7 +128,7 @@
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women){
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
-			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*12; //size of Pi Chart
+			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10; //size of Pi Chart
 			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "rgba(0,0,0,.0)").style("stroke", "black");
 			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
 			// line dependent on Theta
@@ -244,8 +244,8 @@
 
 
 function plotGreyPiChart(men, women){
-			var Radius = Math.sqrt(((men.length+women.length)*45+144*Math.sqrt(men.length+women.length))); //size of Pi Chart
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
+			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10;
 			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "white");
 			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "white");
 			// line dependent on Theta
