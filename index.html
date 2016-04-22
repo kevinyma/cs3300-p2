@@ -114,21 +114,6 @@
 			return activeArray;
 		}
 
-		function outputUpdate(value) {
-			document.querySelector('#year').value = value;
-
-			$(this).siblings().removeClass('active');
-	    	$(this).addClass('active');
-	    	//assign active buttons to variables
-	  
-	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
-	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
-	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
-	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
-	    	console.log(year);
-	    	applyFilters();
-		}
-
 		//applys all filters and changes array values
 		function applyFilters(){
 			filteredMen = men;
@@ -180,6 +165,11 @@
 		function plotPiChart(men, women){
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
 			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10; //size of Pi Chart
+			if (men.length+women.length==0){
+				Radius = 0;
+				Theta = 0;
+			}
+
 			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "rgba(0,0,0,.0)").style("stroke", "black");
 			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
 			// line dependent on Theta
