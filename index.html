@@ -10,6 +10,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<link rel='stylesheet' type="text/css" href="css/style.css">
 	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
+	<style>
+	slider { width:10px; }
+	</style>
 </head>
 <body>
 	<h2>Key Creative Roles in Film</h2>
@@ -34,6 +37,14 @@
 			<p id="w-m" class="filter">Male</p>
 			<p id="w-f" class="filter back-curve">Female</p>
 		</div>
+		<div class="filter-group year-filter">
+			<p class="filter-label">Year</p>
+			<p id="all" class="filter front-curve active">All</p>
+			<p id="enable" class="filter">Year</p>
+			<input type="range" min="2000" max="2015" id="slider" step="1" oninput="outputUpdate(value)"></input>
+			
+		</div>
+
 	</div>
 	<div id="plot"/>
 	<script>
@@ -49,7 +60,24 @@
 	var filteredWomen = [];
 	var directorGender = 'all',
 		producerGender = 'all',
-		writerGender = 'all';
+		writerGender = 'all'
+		year = 'All';
+
+	// $("slider").slider();	
+	// $("enable").click(function() {
+	// 	if(this.checked) {
+	// 		//With JQuery
+	// 		$("slider").slider("enable");
+	// 	}
+
+	// 	else{
+	// 		$("slider").slider("disable");
+	// 	}
+	// })
+
+	function outputUpdate(value) {
+		document.getElementById("enable").innerHTML = value;
+	}
 
 	d3.csv("movies2.csv", function(error, rows) {
 		data = d3.map(rows, function(row) {
@@ -86,6 +114,21 @@
 			return activeArray;
 		}
 
+		function outputUpdate(value) {
+			document.querySelector('#year').value = value;
+
+			$(this).siblings().removeClass('active');
+	    	$(this).addClass('active');
+	    	//assign active buttons to variables
+	  
+	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
+	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
+	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
+	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
+	    	console.log(year);
+	    	applyFilters();
+		}
+
 		//applys all filters and changes array values
 		function applyFilters(){
 			filteredMen = men;
@@ -107,6 +150,12 @@
 			}
 				console.log("success3");
 
+			if(year!="All"){
+				console.log(year);
+				filteredMen = filterYear(year,filteredMen);
+				filteredWomen = filterYear(year, filteredWomen);
+			}
+
 			d3.selectAll("svg > *").remove();
 			plotGreyPiChart(men,women);
 			plotPiChart(filteredMen,filteredWomen);
@@ -122,6 +171,8 @@
 	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
 	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
 	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
+	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
+	    	console.log(year);
 	    	applyFilters();
 		});
 
