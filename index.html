@@ -100,8 +100,9 @@
 </head>
 <body>
 	<h2>Key Creative Roles in Film</h2>
-	<button id = "button" class = "histogram">Breakdown By Percentage</button>
-	<button id = "button2" class = "scatterplot">Gross Revenue</button>
+	<button id = "button" class = "piChart">Male vs. Female Dialogue</button>
+	<button id = "button2" class = "histogram">Breakdown By Percentage</button>
+	<button id = "button3" class = "scatterplot">Gross Revenue</button>
 	<div class="all-filters">
 		<div class="filter-group director-filter">
 			<p class="filter-label">Director</p>
@@ -347,6 +348,9 @@
 			filteredWomen = women;
 			unfilteredMen=[];
 			unfilteredWomen=[];
+			unfiltered = [];
+
+			//console.log(filteredWomen.length + filteredMen.length);
 
 			if (directorGender!="all"){
 				filteredMen = filterRoleByGender("director", directorGender, filteredMen);
@@ -371,6 +375,7 @@
 				filteredWomen = filterYear(year, filteredWomen);
 			}
 
+			//console.log(filteredWomen.length + filteredMen.length);
 
 
 			for (var i = 0; i <men.length; i++) 
@@ -408,6 +413,7 @@
 				}
 			};
 
+			//console.log(unfiltered.length);
 
 
 			d3.selectAll("line").remove();
@@ -436,22 +442,43 @@
 
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 
-		//outside circle
-		svg.append("circle").attr("r", Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos((women.length/(men.length+women.length))*2*Math.PI)*Math.cos((women.length/(men.length+women.length))*2*Math.PI)*10 -3).attr("cx",width/2).attr("cy",height/2).style("fill", "rgba(0,0,0,.0)").style("stroke", "black").moveToBack();
 
 
 		function plotPiChart(men, women, unfiltered){
+
+			//Clear current setup
+			d3.selectAll(".axis").remove();
+			svg.select(".outerCircle").remove();
+			svg.select(".innerCircle").remove();
+			svg.selectAll("line").style("stroke", null);
+
+
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
-			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10 -3; //size of Pi Chart
+			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10; //size of Pi Chart
 			if (men.length+women.length==0){
 				Radius = 0;
 				Theta = 0;
 			}
 
-			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "rgba(0,0,0,.0)").style("stroke", "black").moveToBack();
+			svg.append("circle").attr("class", "innerCircle")
+				.attr("r", Radius).attr("cx",width/2).attr("cy",height/2)
+				.style("fill", "white").style("stroke", "black").moveToBack();
 			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
 			// line dependent on Theta
 			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
+
+			//outside circle
+			var bigTheta = (153/(763))*2*Math.PI; 
+			var bigRadius = Math.sqrt(((763)/Math.PI+Math.sqrt(763)))*12 +Math.cos(bigTheta)*Math.cos(bigTheta)*10;
+
+			svg.append("circle")
+				.attr("class", "outerCircle")
+				.attr("r", bigRadius)
+				.attr("cx",width/2)
+				.attr("cy",height/2)
+				.style("fill", "rgba(0,0,0,.25)")
+				.style("stroke", "black")
+				.moveToBack();
 
 			var wfill = false;
 			var r = 5; //size of data points
@@ -634,34 +661,46 @@
 				}
 			}
 
-			//x and y locations of previous icons that are now moved inside the new radius
-			var xOpenSpaces = [];
-			var yOpenSpaces = [];
-			var counter = 0;
-
-			for (var i = 0; i <xFilteredOldLocations.length; i++) 
-			{
-				var distance = Math.sqrt(((xFilteredOldLocations[i]-width/2)*(xFilteredOldLocations[i]-width/2)) + ((yFilteredOldLocations[i] - height/2)*(yFilteredOldLocations[i] - height/2)));
-
-				if (distance > Radius) {
-					xOpenSpaces.push(xFilteredOldLocations[i]);
-					yOpenSpaces.push(yFilteredOldLocations[i]);
-				};
-			};
-
 			for (var i = 0; i < unfiltered.length; i++) 
 			{
-				var xUnfiltered = data._[unfiltered[i]].cx;
-				var yUnfiltered = data._[unfiltered[i]].cy;
-				var unfilteredDistance = Math.sqrt(((xUnfiltered-width/2)*(xUnfiltered-width/2)) + ((yUnfiltered-height/2)*(yUnfiltered-height/2)));
-
-				if (unfilteredDistance < Radius) {
-					data._[unfiltered[i]].cx = xOpenSpaces[counter];
-					data._[unfiltered[i]].cy = yOpenSpaces[counter];
-					counter++;
-				};
-
+				if(data._[unfiltered[i]].cx >= width/2)
+				{
+					data._[unfiltered[i]].cx = width+10;
+				} 
+				else
+				{
+					data._[unfiltered[i]].cx = -10;
+				}
 			};
+
+			//x and y locations of previous icons that are now moved inside the new radius
+			// var xOpenSpaces = [];
+			// var yOpenSpaces = [];
+			// var counter = 0;
+
+			// for (var i = 0; i <xFilteredOldLocations.length; i++) 
+			// {
+			// 	var distance = Math.sqrt(((xFilteredOldLocations[i]-width/2)*(xFilteredOldLocations[i]-width/2)) + ((yFilteredOldLocations[i] - height/2)*(yFilteredOldLocations[i] - height/2)));
+
+			// 	if (distance > Radius) {
+			// 		xOpenSpaces.push(xFilteredOldLocations[i]);
+			// 		yOpenSpaces.push(yFilteredOldLocations[i]);
+			// 	};
+			// };
+
+			// for (var i = 0; i < unfiltered.length; i++) 
+			// {
+			// 	var xUnfiltered = data._[unfiltered[i]].cx;
+			// 	var yUnfiltered = data._[unfiltered[i]].cy;
+			// 	var unfilteredDistance = Math.sqrt(((xUnfiltered-width/2)*(xUnfiltered-width/2)) + ((yUnfiltered-height/2)*(yUnfiltered-height/2)));
+
+			// 	if (unfilteredDistance < Radius) {
+			// 		data._[unfiltered[i]].cx = xOpenSpaces[counter];
+			// 		data._[unfiltered[i]].cy = yOpenSpaces[counter];
+			// 		counter++;
+			// 	};
+
+			// };
 
 			//console.log(xOpenSpaces);
 
@@ -737,6 +776,9 @@
 
 
 		function plotGreyPiChart(men, women){
+
+			
+
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
 			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10;
 			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "white");
@@ -893,18 +935,27 @@
 		}
 
 		$(".histogram").click(function() {
+			applyFilters();
 			byPercentageHistogram(filtered, unfiltered);
+		});
+
+		$(".piChart").click(function() {
+			applyFilters();
+			plotPiChart(filteredMen, filteredWomen, unfiltered);
 		});
 
 		function byPercentageHistogram(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			svg.select(".outerCircle").remove();
+			svg.select(".innerCircle").remove();
+			svg.selectAll("line").style("stroke", null);
 			
 			var percentageData = [];
 
 			for (var i = 0; i < filtered.length; i++) 
 			{
-				console.log(data._[filtered[i]]);
+				//console.log(data._[filtered[i]]);
 				percentageData.push(100*data._[filtered[i]].percentage_male);
 			};
 
@@ -992,9 +1043,10 @@
 
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
-			svg.selectAll("circle").style("stroke", null);
-			svg.selectAll("line").style("stroke", null);
 			d3.selectAll(".axis").remove();
+			svg.select(".outerCircle").remove();
+			svg.select(".innerCircle").remove();
+			svg.selectAll("line").style("stroke", null);
 			
 			var percentageData = [];
 			var revenueData = [];
