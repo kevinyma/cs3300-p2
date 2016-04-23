@@ -89,10 +89,18 @@
 		font-weight: 600;
 		margin-left: 0px;}
 
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: black;
+		shape-rendering: crispEdges;
+	}
+
 	</style>
 </head>
 <body>
 	<h2>Key Creative Roles in Film</h2>
+	<button id = "button">Breakdown By Percentage</button>
 	<div class="all-filters">
 		<div class="filter-group director-filter">
 			<p class="filter-label">Director</p>
@@ -129,6 +137,7 @@
 
 	var width = 1000;
 	var height = 500;
+	var padding = 50;
 	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
 	women = [];
 	men = [];
@@ -554,6 +563,7 @@
 					mx=r+padding;
 				}
 			}
+		}
 
 			var circles = svg.selectAll("circle").data(rows).attr("class", "points");
 
@@ -561,11 +571,11 @@
 				.append("circle")
 				.attr("cx", function(d){ return d.cx;})
 			  	.attr("cy", function(d){ return d.cy;})
-			  	.attr("r", 5 )
+			  	.attr("r", 6 )
 			  	.style("opacity", .6)
 			  	.style("fill", function(d) {
 			    	var returnColor = "blue";
-			    	if (d.percentage_male >= .5) { returnColor = "blue";}
+			    	if (d.percentage_male > .5) { returnColor = "blue";}
 			    	else  { returnColor = "red"; }
 			    	return returnColor;
 			  	})
@@ -579,7 +589,7 @@
 			    	popupBox.transition().duration(500).style("opacity", 0);   
 			  	})
 			  	;
-		}
+		
 
 		function tooltipMouseover (d)
 		{
@@ -792,6 +802,83 @@ function plotGreyPiChart(men, women){
 			.attr("cy", function(d) { return d.cy; });
 		}
 
+		$("button").click(function() {
+			byPercentageHistogram();
+		});
+
+		function byPercentageHistogram()
+		{
+			
+
+			var percentageData = [];
+
+			rows.forEach(function (line) {
+				percentageData.push(100*line.percentage_male);
+			})
+
+			console.log(percentageData);
+
+			var binCounter = d3.layout.histogram().bins(20).range([d3.min(percentageData), d3.max(percentageData)]);
+
+			var bins = binCounter(percentageData);
+
+			var xScale = d3.scale.linear()
+				.domain([0, 105])
+				.range([padding, width-200]);
+
+			var yScale = d3.scale.linear()
+				.domain([0,
+					d3.max(bins, function (bin) {
+						 return bin.y;
+					 }) ])
+				.range([height/2, padding]);
+
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(0);
+
+			svg.append("g")
+				.attr("transform", "translate(0," + (height/2) + ")")
+				.attr("class", "axis")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("transform", "translate(" + padding + ",0)")
+				.attr("class", "axis")
+				.call(yAxis);
+
+			//for each data point, cx location = floor of percentage to the 10th
+
+
+			console.log(bins[0]);
+			console.log(bins[1]);
+
+			// svg.append("circle")
+			// .attr("cx", xScale(Math.floor(6.5)))
+			// .attr("cy", yScale(5))
+			// .attr("r", 5)
+			// .style("fill", "blue");
+
+			var yHeights = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+			rows.forEach(function (line) {
+				yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] + 1;
+			})
+
+
+			rows.forEach(function (line) {
+				line.cx=xScale(Math.floor(line.percentage_male*100/5)*5);
+				line.cy=yScale(yHeights[Math.floor(line.percentage_male*100/5)]);
+				yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] - 1;
+			})	
+
+			circles.transition().duration(1000)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; });
+
+			svg.selectAll("circle").style("stroke", null);
+			svg.selectAll("line").style("stroke", null);
+
+
+		}
 
 
 	})
