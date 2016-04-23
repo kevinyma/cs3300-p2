@@ -12,6 +12,83 @@
 	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
 	<style>
 	slider { width:10px; }
+	div.tooltip {   
+		position: absolute;           
+		text-align: center;           
+		width: 180px;                  
+		height: 130px;                 
+		padding: 2px;             
+		font: 10px sans-serif;        
+		background: white;   
+		border: 1px;      
+		border-radius: 3px; 
+		border-style: solid;          
+		pointer-events: none;}
+
+	.dataBox {
+		padding-right: 5px;
+		padding-left: 5px;
+		padding-top: 5px;}
+
+	.dataRow{
+	    display: flex;
+	    left: 60px;
+	    top: 60px;
+	    height: 15px;
+	    width: auto;}
+
+	.dialogueLabel{
+	    font-size: 9px;
+	    font-weight: 600;
+	    line-height: 11px;
+	    margin: 0px;
+	    width: 90px;
+	    text-align: right;
+	    margin-right: 4px;}
+
+	.nameLabel{
+	    font-size: 12px;
+	    font-weight: 700;
+	    line-height: 15px;
+	    margin: 0px;
+	    width: 180px;
+	    text-align: middle;}
+
+	.dataLabel{
+	    font-size: 9px;
+	    font-weight: 600;
+	    line-height: 15px;
+	    margin: 0px;
+	    width: 180px;
+	    text-align: middle;}
+
+	.dataBar {
+	    height: 10px;}
+
+	.dataPercent{
+		font-size: 10px;
+		color: black;
+		line-height: 10px;
+		margin: 0px;
+		font-weight: 500;
+		margin-left: 4px;}
+
+	.crewLabel{
+	    font-size: 9px;
+	    font-weight: 600;
+	    line-height: 11px;
+	    margin: 0px;
+	    width: 60px;
+	    text-align: right;
+	    margin-right: 2px;}
+
+	.dataCrewGender{
+		font-size: 9px;
+		line-height: 10px;
+		margin: 0px;
+		font-weight: 600;
+		margin-left: 0px;}
+
 	</style>
 </head>
 <body>
@@ -47,6 +124,7 @@
 
 	</div>
 	<div id="plot"/>
+	<div id = "points"/>
 	<script>
 
 	var width = 1000;
@@ -58,6 +136,8 @@
 	activeMen = [];
 	var filteredMen = [];
 	var filteredWomen = [];
+	var unfilteredMen = [];
+	var unfilteredWomen = [];
 	var directorGender = 'all',
 		producerGender = 'all',
 		writerGender = 'all'
@@ -74,12 +154,117 @@
 	// 		$("slider").slider("disable");
 	// 	}
 	// })
+	
+
+	//Popup variable declarations
+
+	var popupBox = d3.select("body").append("div")   
+    	.attr("class", "tooltip")
+    	.style("opacity", 0);
+
+	var dataBarScale = d3.scale.linear().domain([0,1]).range([0,50]);
+
+	var dialogueArray = [0.5,0.6];
+
+	var popupName = popupBox.append("p")
+	    .attr("class","nameLabel")
+	    .text(function(){return "";});
+
+	var popupYear = popupBox.append("p")
+	    .attr("class","dataLabel")
+	    .text(function(d){return 1;
+	    });
+
+	var popupGross = popupBox.append("p")
+	    .attr("class","dataLabel")
+	    .text(function(d){return 1;
+	    });
+
+	var popupData = popupBox
+	    .append("div")
+	    .attr("class","dataBox") 
+	    .selectAll("div")
+	    .data(dialogueArray,function(d){
+	      	return d;
+	    	})
+	    .enter()
+	    .append("div")
+	    .attr("class","dataRow");
+
+
+	var popupDialogueDataLabel = popupData.append("p")
+	    .attr("class","dialogueLabel")
+	    .text(function(d,i){
+	      if(i==0){
+	        return "Female Dialogue:";
+	      }
+	      return "Male Dialogue:";
+	    });
+
+	var popupDataBar = popupData.append("div")
+	    .attr("class","dataBar")
+	    .style("width",function(d){
+	        return dataBarScale(d) + "px";
+	        })
+	    .style("background-color",function(d,i){
+	        if (i==0){
+	          return "red";
+	        }
+	          return "blue";
+	        });
+
+
+	var percentFormat = d3.format(".0%");
+
+	var popupPercent = popupData.append("p")
+	    .attr("class","dataPercent")
+	    .text(function(d){
+	      return percentFormat(d);
+	    });
+
+	var crewArray = ["f","f","f"];
+
+	var popupCrew = popupBox
+	    .append("div")
+	    .attr("class","dataBox") 
+	    .selectAll("div")
+	    .data(crewArray,function(d){
+	      	return d;
+	    	})
+	    .enter()
+	    .append("div")
+	    .attr("class","dataRow");
+
+	var popupWriterLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Writer: ");
+
+	var popupWriter = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+	var popupDirectorLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Director: ");
+
+	var popupDirector = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+	var popupProducerLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Producer: ");
+
+	var popupProducer = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
 
 	function outputUpdate(value) {
 		document.getElementById("enable").innerHTML = value;
 	}
 
-	d3.csv("movies2.csv", function(error, rows) {
+	d3.csv("movies3.csv", function(error, rows) {
 		data = d3.map(rows, function(row) {
 			return row.script_id;
 		});
@@ -118,6 +303,9 @@
 		function applyFilters(){
 			filteredMen = men;
 			filteredWomen = women;
+			unfilteredMen=[];
+			unfilteredWomen=[];
+
 			if (directorGender!="all"){
 				filteredMen = filterRoleByGender("director", directorGender, filteredMen);
 				filteredWomen = filterRoleByGender("director", directorGender, filteredWomen);
@@ -141,8 +329,45 @@
 				filteredWomen = filterYear(year, filteredWomen);
 			}
 
+
+
+			for (var i = 0; i <men.length; i++) 
+			{
+				var inMFiltered = 0;
+				for (var j = 0; j<filteredMen.length; j++) 
+				{
+					if(filteredMen[j] == men[i])
+					{
+						inMFiltered = 1;
+					}
+				};
+
+				if(inMFiltered == 0)
+				{
+					unfilteredMen.push(men[i]);
+				}
+			};
+
+
+			for (var i = 0; i <women.length; i++) 
+			{
+				var inWFiltered = 0;
+				for (var j = 0; j<filteredWomen.length; j++) 
+				{
+					if(filteredWomen[j] == women[i])
+					{
+						inWFiltered = 1;
+					}
+				};
+
+				if(inWFiltered == 0)
+				{
+					unfilteredWomen.push(women[i]);
+				}
+			};
+
 			d3.selectAll("svg > *").remove();
-			plotGreyPiChart(men,women);
+			//plotGreyPiChart(unfilteredMen,unfilteredWomen);
 			plotPiChart(filteredMen,filteredWomen);
 
 		}
@@ -195,11 +420,24 @@
 							break;
 						}
 						if (wfill){
-							svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+
+							if(women[wcount]>0){
 							wcount-=1;
+							data._[women[wcount]].cx = (width)/2-wx;
+							data._[women[wcount]].cy = height/2 -wy; };
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+							
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
+
 						wcount-=1;
+
+						if(women[wcount]>0){
+							data._[women[wcount]].cx = (width)/2+wx;
+							data._[women[wcount]].cy = height/2 -wy;
+						}
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
+
+						
 						wx+=(r+padding)*2;
 					}
 						wy+=(r+padding)*2;
@@ -210,8 +448,13 @@
 						if (wcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "blue");
+
 						wcount-=1;
+						if(women[wcount]>0){
+						data._[women[wcount]].cx = (width)/2-wx2;
+						data._[women[wcount]].cy = height/2 +wy;};
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "blue");
+						
 						wx2+=(r+padding)*2;
 					}
 					wx2=r+padding;				
@@ -220,9 +463,19 @@
 						if (wcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
 						wcount-=2;
+
+						if(women[wcount]>0){
+						data._[women[wcount]].cx = (width)/2+wx;
+						data._[women[wcount]].cy = height/2 -wy;};
+
+						if(women[wcount+1]>0){
+						data._[women[wcount+1]].cx = (width)/2-wx;
+						data._[women[wcount+1]].cy = height/2 -wy;};
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+						
 						wx+=(r+padding)*2;
 					}
 					wy+=(r+padding)*2;
@@ -247,11 +500,20 @@
 							break;
 						}
 						if (mfill){
-							svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
 							mcount-=1;
+							data._[men[mcount]].cx = (width)/2-mx;
+							data._[men[mcount]].cy = height/2 +my;
+
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+							
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
+
 						mcount-=1;
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
+						
+
 						mx+=(r+padding)*2;
 					}
 						my+=(r+padding)*2;
@@ -262,8 +524,11 @@
 						if (mcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "red");
 						mcount-=1;
+						data._[men[mcount]].cx = (width)/2-mx2;
+						data._[men[mcount]].cy = height/2 -my;
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "red");
+						
 						mx2+=(r+padding)*2;
 					}
 					mx2=r+padding;				
@@ -272,15 +537,102 @@
 						if (mcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+
 						mcount-=2;
+
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+
+						data._[men[mcount+1]].cx = (width)/2-mx;
+						data._[men[mcount+1]].cy = height/2 +my;
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+						
 						mx+=(r+padding)*2;
 					}
 					my+=(r+padding)*2;
 					mx=r+padding;
 				}
 			}
+
+			var circles = svg.selectAll("circle").data(rows).attr("class", "points");
+
+			circles.enter()
+				.append("circle")
+				.attr("cx", function(d){ return d.cx;})
+			  	.attr("cy", function(d){ return d.cy;})
+			  	.attr("r", 5 )
+			  	.style("opacity", .6)
+			  	.style("fill", function(d) {
+			    	var returnColor = "blue";
+			    	if (d.percentage_male >= .5) { returnColor = "blue";}
+			    	else  { returnColor = "red"; }
+			    	return returnColor;
+			  	})
+				.on("mouseover", function(d) {
+					d3.select(this).style("stroke","black");
+		            tooltipMouseover(d);
+
+		        })               
+			  	.on("mouseout", function(d) {  
+			  		d3.select(this).style("stroke",null);     
+			    	popupBox.transition().duration(500).style("opacity", 0);   
+			  	})
+			  	;
+		}
+
+		function tooltipMouseover (d)
+		{
+
+			popupName.text(d.title);
+
+			popupYear.text(d.year);
+
+			popupGross.text("$" + d.gross + "M Revenue");
+
+		   	popupData.data([1-d.percentage_male,d.percentage_male]).enter();
+
+		   	popupData.select(".dataPercent")
+		        .text(function(d){
+		          return percentFormat(d);
+		        });
+			
+			popupData.select(".dataBar")
+		        .transition()
+		        .duration(200)
+		        .style("width",function(d){
+		          return dataBarScale(d) + "px";
+		        });
+
+		    popupWriter.text(d.writer)
+		    	.style("text-transform", "uppercase")
+		    	.style("color", function (){
+		    		if(d.writer == "m") {return "blue";}
+		    		return "red";
+		    	});
+
+		    popupDirector.text(d.director)
+		    	.style("text-transform", "uppercase")
+		    	.style("color", function(){
+		    		if(d.director == "m") {return "blue";}
+		    		return "red";
+		    	});
+			popupProducer.text(d.producer)
+				.style("text-transform", "uppercase")
+		    	.style("color", function(){
+		    		if(d.producer == "m") {return "blue";}
+		    		return "red";
+		    	});
+
+			popupBox.transition()
+		        .duration(150)
+		        .style("opacity", .95);
+
+
+		    popupBox.style("left", (d3.event.pageX + 10) + "px")
+		            .style("top", (d3.event.pageY - 20)+ "px");
+
+
 		}
 
 
@@ -312,11 +664,18 @@ function plotGreyPiChart(men, women){
 							break;
 						}
 						if (wfill){
-							svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
 							wcount-=1;
+							data._[women[wcount]].cx = (width)/2-wx;
+							data._[women[wcount]].cy = height/2 -wy;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+
 						wcount-=1;
+						data._[women[wcount]].cx = (width)/2+wx;
+						data._[women[wcount]].cy = height/2 -wy;
+
 						wx+=(r+padding)*2;
 					}
 						wy+=(r+padding)*2;
@@ -327,8 +686,13 @@ function plotGreyPiChart(men, women){
 						if (wcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "rgba(0,0,0,.125)");
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "rgba(0,0,0,.125)");
+
 						wcount-=1;
+						data._[women[wcount]].cx = (width)/2-wx2;
+						data._[women[wcount]].cy = height/2 +wy;
+
 						wx2+=(r+padding)*2;
 					}
 					wx2=r+padding;				
@@ -337,9 +701,17 @@ function plotGreyPiChart(men, women){
 						if (wcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+
 						wcount-=2;
+						data._[women[wcount]].cx = (width)/2+wx;
+						data._[women[wcount]].cy = height/2 -wy;
+
+						data._[women[wcount+1]].cx = (width)/2-wx;
+						data._[women[wcount+1]].cy = height/2 -wy;
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						
 						wx+=(r+padding)*2;
 					}
 					wy+=(r+padding)*2;
@@ -364,11 +736,18 @@ function plotGreyPiChart(men, women){
 							break;
 						}
 						if (mfill){
-							svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
 							mcount-=1;
+							data._[men[mcount]].cx = (width)/2-mx;
+							data._[men[mcount]].cy = height/2 +my;
+
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+							
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
 						mcount-=1;
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+
 						mx+=(r+padding)*2;
 					}
 						my+=(r+padding)*2;
@@ -379,8 +758,11 @@ function plotGreyPiChart(men, women){
 						if (mcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "rgba(0,0,0,.125)");
 						mcount-=1;
+						data._[men[mcount]].cx = (width)/2-mx2;
+						data._[men[mcount]].cy = height/2 -my;
+
 						mx2+=(r+padding)*2;
 					}
 					mx2=r+padding;				
@@ -389,15 +771,25 @@ function plotGreyPiChart(men, women){
 						if (mcount==0){
 							break;
 						}
-						svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
 						mcount-=2;
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+
+						data._[men[mcount+1]].cx = (width)/2-mx;
+						data._[men[mcount+1]].cy = height/2 +my;
+
 						mx+=(r+padding)*2;
 					}
 					my+=(r+padding)*2;
 					mx=r+padding;
 				}
 			}
+
+			svg.selectAll("#points").transition().duration(1000)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; });
 		}
 
 
