@@ -150,6 +150,7 @@
 	var height = 500;
 	var graphPadding = 50;
 	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
+
 	women = [];
 	men = [];
 	activeWomen = [];
@@ -378,37 +379,31 @@
 			//console.log(filteredWomen.length + filteredMen.length);
 
 
-			for (var i = 0; i <men.length; i++) 
-			{
+			for (var i = 0; i <men.length; i++) {
 				var inMFiltered = 0;
-				for (var j = 0; j<filteredMen.length; j++) 
-				{
-					if(filteredMen[j] == men[i])
-					{
+
+				for (var j = 0; j<filteredMen.length; j++) {
+					if(filteredMen[j] == men[i]){
 						inMFiltered = 1;
 					}
 				};
 
-				if(inMFiltered == 0)
-				{
+				if(inMFiltered == 0){
 					unfiltered.push(men[i]);
 				}
 			};
 
 
-			for (var i = 0; i <women.length; i++) 
-			{
+			for (var i = 0; i <women.length; i++) {
 				var inWFiltered = 0;
-				for (var j = 0; j<filteredWomen.length; j++) 
-				{
-					if(filteredWomen[j] == women[i])
-					{
+				
+				for (var j = 0; j<filteredWomen.length; j++) {
+					if(filteredWomen[j] == women[i]){
 						inWFiltered = 1;
 					}
 				};
 
-				if(inWFiltered == 0)
-				{
+				if(inWFiltered == 0){
 					unfiltered.push(women[i]);
 				}
 			};
@@ -481,8 +476,8 @@
 				.moveToBack();
 
 			var wfill = false;
-			var r = 5; //size of data points
 			var padding = 1;
+			var r = 5;
 			var wx = r+padding;
 			var wy = r+padding;
 			var wcount = women.length;
@@ -661,15 +656,11 @@
 				}
 			}
 
-			for (var i = 0; i < unfiltered.length; i++) 
-			{
-				if(data._[unfiltered[i]].cx >= width/2)
-				{
+			for (var i = 0; i < unfiltered.length; i++) {
+				if(data._[unfiltered[i]].cx >= width/2){
 					data._[unfiltered[i]].cx = width+10;
 				} 
-				else
-				{
-					data._[unfiltered[i]].cx = -10;
+				else{ data._[unfiltered[i]].cx = -10;
 				}
 			};
 
@@ -706,7 +697,8 @@
 
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
-			.attr("cy", function(d) { return d.cy; });
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", 5);
 
 			// circles.style("fill", function(d){
 			// 	if(Math.sqrt((d.cx-width/2)*(d.cx-width/2) + (d.cy-height/2)*(d.cy-height/2)) > Radius)
@@ -931,7 +923,8 @@
 
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
-			.attr("cy", function(d) { return d.cy; });
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", 5);
 		}
 
 		$(".histogram").click(function() {
@@ -1015,21 +1008,18 @@
 			// 	yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] - 1;
 			// })	
 
-			for (var i = 0; i < unfiltered.length; i++) 
-			{
-				if(data._[unfiltered[i]].cx >= width/2)
-				{
+			for (var i = 0; i < unfiltered.length; i++) {
+				if(data._[unfiltered[i]].cx >= width/2){
 					data._[unfiltered[i]].cx = width+10;
 				} 
-				else
-				{
-					data._[unfiltered[i]].cx = -10;
+				else{data._[unfiltered[i]].cx = -10;
 				}
 			};
 
 			circles.transition().duration(1500)
 			.attr("cx", function(d) { return d.cx; })
-			.attr("cy", function(d) { return d.cy; });
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", 5);
 
 			svg.selectAll("circle").style("stroke", null);
 			svg.selectAll("line").style("stroke", null);
@@ -1101,9 +1091,28 @@
 				}
 			};
 
+			// circles.attr("r", function(d)
+			// {
+			// 	if(d.cx != -10 && d.cx != width+10)
+			// 	{
+			// 		var newRadius =  15*d.gross/Math.max.apply(null, revenueData);
+			// 		console.log(newRadius);
+			// 		return newRadius;
+			// 	};
+			// });
+
 			circles.transition().duration(1500)
 			.attr("cx", function(d) { return d.cx; })
-			.attr("cy", function(d) { return d.cy; });
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", function(d)
+			{
+				if(d.cx != -10 && d.cx != width+10)
+				{
+					var newRadius =  20*d.gross/Math.max.apply(null, revenueData);
+					console.log(newRadius);
+					return newRadius;
+				};
+			});
 
 			
 			
