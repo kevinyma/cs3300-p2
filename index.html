@@ -100,7 +100,8 @@
 </head>
 <body>
 	<h2>Key Creative Roles in Film</h2>
-	<button id = "button">Breakdown By Percentage</button>
+	<button id = "button" class = "histogram">Breakdown By Percentage</button>
+	<button id = "button2" class = "scatterplot">Gross Revenue</button>
 	<div class="all-filters">
 		<div class="filter-group director-filter">
 			<p class="filter-label">Director</p>
@@ -416,8 +417,6 @@
 			
 			filtered = filteredMen.concat(filteredWomen);
 			plotPiChart(filteredMen,filteredWomen, unfiltered);
-
-
 
 		}
 
@@ -893,12 +892,13 @@
 			.attr("cy", function(d) { return d.cy; });
 		}
 
-		$("button").click(function() {
+		$(".histogram").click(function() {
 			byPercentageHistogram(filtered, unfiltered);
 		});
 
 		function byPercentageHistogram(filtered, unfiltered)
 		{
+			d3.selectAll(".axis").remove();
 			
 			var percentageData = [];
 
@@ -926,7 +926,7 @@
 				.range([3*height/4, graphPadding]);
 
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
-			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(0);
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			svg.append("g")
 				.attr("transform", "translate(0," + (3*height/4) + ")")
@@ -966,7 +966,14 @@
 
 			for (var i = 0; i < unfiltered.length; i++) 
 			{
-				data._[unfiltered[i]].cx = width+10;
+				if(data._[unfiltered[i]].cx >= width/2)
+				{
+					data._[unfiltered[i]].cx = width+10;
+				} 
+				else
+				{
+					data._[unfiltered[i]].cx = -10;
+				}
 			};
 
 			circles.transition().duration(1500)
@@ -976,6 +983,78 @@
 			svg.selectAll("circle").style("stroke", null);
 			svg.selectAll("line").style("stroke", null);
 
+
+		}
+
+		$(".scatterplot").click(function() {
+			byRevenueScatterPlot(filtered, unfiltered);
+		});
+
+		function byRevenueScatterPlot(filtered, unfiltered)
+		{
+			svg.selectAll("circle").style("stroke", null);
+			svg.selectAll("line").style("stroke", null);
+			d3.selectAll(".axis").remove();
+			
+			var percentageData = [];
+			var revenueData = [];
+
+			for (var i = 0; i < filtered.length; i++) 
+			{
+				//console.log(data._[filtered[i]]);
+				percentageData.push(100*data._[filtered[i]].percentage_male);
+				revenueData.push(data._[filtered[i]].gross)
+			};
+
+			//console.log(revenueData);
+
+			var xScale = d3.scale.linear()
+				.domain([0, 100])
+				.range([width/4, 3*width/4]);
+
+			//console.log(Math.max.apply(null, revenueData));
+
+			var yScale = d3.scale.linear()
+				.domain([0, Math.max.apply(null, revenueData)])
+				.range([3*height/4, graphPadding]);
+
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
+			svg.append("g")
+				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("class", "axis")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("transform", "translate(" + width/4 + ",0)")
+				.attr("class", "axis")
+				.call(yAxis);
+
+			for (var i = 0; i <filtered.length; i++) 
+			{
+				data._[filtered[i]].cy = yScale(data._[filtered[i]].gross);
+				data._[filtered[i]].cx = xScale(100*data._[filtered[i]].percentage_male);
+			};
+
+						for (var i = 0; i < unfiltered.length; i++) 
+			{
+				if(data._[unfiltered[i]].cx >= width/2)
+				{
+					data._[unfiltered[i]].cx = width+10;
+				} 
+				else
+				{
+					data._[unfiltered[i]].cx = -10;
+				}
+			};
+
+			circles.transition().duration(1500)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; });
+
+			
+			
 
 		}
 
