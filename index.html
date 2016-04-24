@@ -91,6 +91,12 @@
         });
     };
 
+	d3.selection.prototype.moveToFront = function() {
+		return this.each(function(){
+			this.parentNode.appendChild(this);
+		});
+	};
+
     function myFunction(){
 		document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
 	}
@@ -114,6 +120,8 @@
 		writerGender = 'all'
 		year = 'All';
 	var page = "piChart";
+
+	var circles;
 	// $("slider").slider();	
 	// $("enable").click(function() {
 	// 	if(this.checked) {
@@ -221,7 +229,7 @@
 				women.push(line.script_id);
 			}
 		});
-		var circles = svg.selectAll("circle").data(rows); //.attr("class", "points")
+		circles = svg.selectAll("circle").data(rows); //.attr("class", "points")
 		circles.enter()
 			.append("circle")
 			.attr("cx", width/2)
@@ -238,7 +246,21 @@
 	            tooltipMouseover(d);})             
 		  	.on("mouseout", function(d) {  
 		  		d3.select(this).style("stroke",null);     
-		    	popupBox.transition().duration(200).style("opacity", 0);});
+		    	popupBox.transition().duration(200).style("opacity", 0);})
+		  	.on("click", function(d){
+		  		d3.select(this).moveToFront();
+
+		  		d3.select(this).transition().duration(1000)
+					.attr("cx", width/2)
+					.attr("cy", height/2)
+					.attr("r", 250)
+					.style("opacity", 1)
+					.style("fill", "gainsboro");
+				
+		  		byCharacter(d);
+		  	});
+
+
 		filtered = men.concat(women); 	
 		plotPiChart(men, women, unfiltered);
 		function filterYear(year,array){
@@ -346,6 +368,7 @@
 		function plotPiChart(men, women, unfiltered){
 			//Clear current setup
 			d3.selectAll(".axis").remove();
+			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
 			svg.selectAll("line").style("stroke", null);
@@ -570,7 +593,13 @@
 			circles.transition().duration(1250)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
-			.attr("r", 5);
+			.attr("r", 5)
+			.style("opacity", .6)
+			.style("fill", function(d) {
+		    	var returnColor = "blue";
+		    	if (d.percentage_male > .5) { returnColor = "blue";}
+		    	else  { returnColor = "red"; }
+		    	return returnColor;});
 			// circles.style("fill", function(d){
 			// 	if(Math.sqrt((d.cx-width/2)*(d.cx-width/2) + (d.cy-height/2)*(d.cy-height/2)) > Radius)
 			// 	{
@@ -760,7 +789,12 @@
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
-			.attr("r", 5);
+			.attr("r", 5)
+			.style("fill", function(d) {
+		    	var returnColor = "blue";
+		    	if (d.percentage_male > .5) { returnColor = "blue";}
+		    	else  { returnColor = "red"; }
+		    	return returnColor;});
 		}
 		$(".histogram").click(function() {
 			applyFilters();
@@ -773,6 +807,7 @@
 		function byPercentageHistogram(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
 			svg.selectAll("line").style("stroke", null);
@@ -834,7 +869,14 @@
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
-			.attr("r", 5);
+			.attr("r", 5)
+			.style("opacity", .6)
+			.style("fill", function(d) {
+		    	var returnColor = "blue";
+		    	if (d.percentage_male > .5) { returnColor = "blue";}
+		    	else  { returnColor = "red"; }
+		    	return returnColor;});
+
 			svg.selectAll("circle").style("stroke", null);
 			svg.selectAll("line").style("stroke", null);
 		}
@@ -844,6 +886,7 @@
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
 			svg.selectAll("line").style("stroke", null);
@@ -898,6 +941,12 @@
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
+			.style("opacity", .6)
+			.style("fill", function(d) {
+		    	var returnColor = "blue";
+		    	if (d.percentage_male > .5) { returnColor = "blue";}
+		    	else  { returnColor = "red"; }
+		    	return returnColor;})
 			.attr("r", function(d)
 			{
 				if(d.cx != -10 && d.cx != width+10)
@@ -910,6 +959,98 @@
 			
 		}
 	});
+
+	function byCharacter(d)
+	{
+		d3.selectAll(".axis").remove();
+
+		d3.csv("characterlist.csv", function(error, rows) {
+			
+			var characterArray = [];
+			// var characterArray = [];
+			// var characterWords = [];
+
+			var maxWords = 0;
+
+			rows.forEach(function (line) {
+				if (line.script_id == d.script_id){
+					characterArray.push({
+						name: line.imdb_character_name,
+						words: line.words,
+						gender: line.gender
+					});
+
+					// if(line.words > maxWords){
+					// 	maxWords = line.words;
+					// };
+					// console.log(line.words + " " + maxWords);
+					// characterArray.push(line.imdb_character_name);
+					// characterWords.push(line.words);
+				}
+			});
+
+			characterArray.sort(function(a,b){
+				return parseFloat(a.words) - parseFloat(b.words);
+			});
+
+			maxWords = characterArray[characterArray.length-1].words;
+
+			//console.log(maxWords);
+
+			var xScale = d3.scale.ordinal()
+				.domain(characterArray.map(function(d){
+					return d.name;
+				}))
+				.rangeRoundBands([width/4+50, 3*width/4 - 50], .1);
+			//console.log(Math.max.apply(null, revenueData));
+			var yScale = d3.scale.linear()
+				.domain([0, maxWords])
+				.range([3*height/4, graphPadding + 50]);
+
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
+			svg.append("g")
+				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("class", "xAxis axis")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("transform", "translate(" + (width/4 + 50) + ",0)")
+				.attr("class", "axis")
+				.call(yAxis);
+
+			svg.selectAll(".xAxis text")
+          		.attr("transform", function(d) {
+             		return "translate(" + (this.getBBox().height*-2)+ "," + (this.getBBox().height + 10) + ")rotate(-45)";
+             	});
+
+             console.log(characterArray.length);
+
+            for (var i = 0; i <characterArray.length; i++) {
+
+            	svg.append("rect")
+	               .attr("x", xScale(characterArray[i].name))
+	               .attr("y", yScale(characterArray[i].words))
+	               .attr("width", xScale.rangeBand())
+	               .attr("height", 3*height/4 - yScale(characterArray[i].words))
+	               .attr("fill", function(){
+	               		if(characterArray[i].gender == "m"){
+	               			return "blue";
+	               		}
+	               		return "red";
+	               });
+            	
+            };
+
+        
+
+		});
+
+		
+	}
+
+
 	</script>
 
 </body>
