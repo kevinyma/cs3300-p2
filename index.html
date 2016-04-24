@@ -2,158 +2,1063 @@
 <html>
 
 <head>
-  <title>
-  	CS3300-P2 Visualization
-  </title>
-  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+ 	<title>
+		CS3300 - Project 2
+	</title>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<link rel='stylesheet' type="text/css" href="css/style.css">
+	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
 	<style>
-		body { font-family: "Source Sans Pro"; 
-			margin: 50px; 
-			}
-		.axis path,
-		.axis line {
-			fill: none;
-			stroke: none;
-			shape-rendering: crispEdges;
-		}
-		.axis { 
-			font-size: .7em;
-		}
-		text {
-			font-size: 0.5rem;
-		}
-		.title {
-			font-size: 1rem;
-		}
+	slider { width:10px; }
+
 	</style>
 </head>
 <body>
-	<h1>Project 2</h2>
-	<div id="plot"/>
-	<script>
-	var width = 200;
-	var height = 200;
-	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
-	women = [1,3,4,5,6,7,9,2,3,4,5,6,7,9,10,11,12,14,13];
-	men = [4,2,5,6,7,8,9,10,11,12,13,15,18,20,24,26,19,20,30,41];
-	//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
-	function plotPiChart(men, women){
-		var Radius = (men.length+women.length)*1.5; //size of Pi Chart
-		var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
-		svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "black");
-		svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
-		// line dependent on Theta
-		svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
+	<h2>Key Creative Roles in Film</h2>
 
-		var wfill = false;
-		var r = 5; //size of data points
-		var padding = 1;
-		var wx = r+padding;
-		var wy = r+padding;
-		var wcount = women.length;
-		//plots all points where women have more speaking parts
-		while (wcount>0){
-			var d = r+padding;
-			if (Theta<Math.PI){
-				wx=(1/Math.tan(Theta))*(wy)+(1/Math.sin(Theta))*(r+padding);
-				if (wy+r+padding<Radius && (wx+r)*(wx+r)+(wy+r)*(wy+r)>Radius*Radius){
-					wx = r+padding;
-					wfill = true;
-				}
-				while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
-					if (wcount==0){
-						break;
-					}
-					if (wfill){
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("stroke", "blue");
-						wcount-=1;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("stroke", "blue");
-					wcount-=1;
-					wx+=(r+padding)*2;
-				}
-					wy+=(r+padding)*2;
-				}
-			else{
-				wx2 = (1/Math.tan(Theta))*(wy)-(1/Math.sin(Theta))*(r+padding);
-				while((wx2+r)*(wx2+r)+(wy+r)*(wy+r)<Radius*Radius && wy>Math.sin(Theta)*Radius){
-					if (wcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("stroke", "blue");
-					wcount-=1;
-					wx2+=(r+padding)*2;
-				}
-				wx2=r+padding;				
-				wx=r+padding;
-				while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
-					if (wcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("stroke", "blue");
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("stroke", "blue");
-					wcount-=2;
-					wx+=(r+padding)*2;
-				}
-				wy+=(r+padding)*2;
-				wx=r+padding;
-			}
-		}
-		var mfill = false;
-		var mx = r+padding;
-		var my = r+padding;
-		var mcount = men.length;
-		var Theta2 = Math.PI*2-Theta;
-		// plots all points where men have more speaking parts
-		while (mcount>0){
-			if (Theta2<Math.PI){
-				mx=(1/Math.tan(Theta2))*(my)+(1/Math.sin(Theta2))*(r+padding);
-				if (my+r+padding<Radius && (mx+r)*(mx+r)+(my+r)*(my+r)>Radius*Radius){
-					mx = r+padding;
-					mfill = true;
-				}
-				while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
-					if (mcount==0){
-						break;
-					}
-					if (mfill){
-						svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("stroke", "red");
-						mcount-=1;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("stroke", "red");
-					mcount-=1;
-					mx+=(r+padding)*2;
-				}
-					my+=(r+padding)*2;
-				}
-			else{
-				mx2 = (1/Math.tan(Theta2))*(my)-(1/Math.sin(Theta2))*(r+padding);
-				while((mx2+r)*(mx2+r)+(my+r)*(my+r)<Radius*Radius && my<Math.sin(Theta)*Radius){
-					if (mcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("stroke", "red");
-					mcount-=1;
-					mx2+=(r+padding)*2;
-				}
-				mx2=r+padding;				
-				mx=r+padding;
-				while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
-					if (mcount==0){
-						break;
-					}
-					svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("stroke", "red");
-					svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("stroke", "red");
-					mcount-=2;
-					mx+=(r+padding)*2;
-				}
-				my+=(r+padding)*2;
-				mx=r+padding;
-			}
-		}
+	<div class="filter-group pages-filter">
+		<p class="filter-label">Pages</p>
+		<p id="piChart" class="filter front-curve active">Male vs. Female Dialogue</p>
+		<p id="histogram" class="filter">Percentage Breakdown</p>
+		<p id="scatterplot" class="filter back-curve">Impact on Gross Revenue</p>
+	</div>
+<!-- 
+
+		<button id = "button" class = "piChart">Male vs. Female Dialogue</button>
+		<button id = "button2" class = "histogram">Breakdown By Percentage</button>
+		<button id = "button3" class = "scatterplot">Gross Revenue</button> -->
+
+
+	<div class="all-filters">
+		<div class="filter-group director-filter">
+			<p class="filter-label">Director</p>
+			<p id="d-all" class="filter front-curve active">All</p>
+			<p id="d-m" class="filter">Male</p>
+			<p id="d-f" class="filter back-curve">Female</p>
+		</div>
+
+		<div class="filter-group producer-filter">
+			<p class="filter-label">Producer</p>
+			<p id="p-all" class="filter front-curve active">All</p>
+			<p id="p-m" class="filter">Male</p>
+			<p id="p-f" class="filter back-curve">Female</p>
+		</div>
+
+		<div class="filter-group writer-filter">
+			<p class="filter-label">Writer</p>
+			<p id="w-all" class="filter front-curve active">All</p>
+			<p id="w-m" class="filter">Male</p>
+			<p id="w-f" class="filter back-curve">Female</p>
+		</div>
+		<div class="filter-group year-filter">
+			<p class="filter-label">Year</p>
+			<p id="all" class="filter front-curve active">All</p>
+			<p id="enable" class="filter">Year</p>
+			<input type="range" min="2000" max="2015" id="slider" step="1" oninput="outputUpdate(value)"></input>
+			
+		</div>
+
+	</div>
+	<div id="plot"/>
+	<div id = "points"/>
+	<script>
+
+	d3.selection.prototype.moveToBack = function() {  
+        return this.each(function() { 
+            var firstChild = this.parentNode.firstChild; 
+            if (firstChild) { 
+                this.parentNode.insertBefore(this, firstChild); 
+            } 
+        });
+    };
+
+	var width = 800;
+	var height = 500;
+	var graphPadding = 50;
+	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
+
+	women = [];
+	men = [];
+	activeWomen = [];
+	activeMen = [];
+	var filteredMen = [];
+	var filteredWomen = [];
+	var unfiltered = [];
+	var filtered = [];
+	// var unfilteredMen = [];
+	// var unfilteredWomen = [];
+	var directorGender = 'all',
+		producerGender = 'all',
+		writerGender = 'all'
+		year = 'All';
+
+	var page = "piChart";
+
+	// $("slider").slider();	
+	// $("enable").click(function() {
+	// 	if(this.checked) {
+	// 		//With JQuery
+	// 		$("slider").slider("enable");
+	// 	}
+
+	// 	else{
+	// 		$("slider").slider("disable");
+	// 	}
+	// })
+	
+
+	//Popup variable declarations
+
+	var popupBox = d3.select("body").append("div")   
+    	.attr("class", "tooltip")
+    	.style("opacity", 0);
+
+	var dataBarScale = d3.scale.linear().domain([0,1]).range([0,50]);
+
+	var dialogueArray = [0.5,0.6];
+
+	var popupName = popupBox.append("p")
+	    .attr("class","nameLabel")
+	    .text(function(){return "";});
+
+	var popupYear = popupBox.append("p")
+	    .attr("class","dataLabel")
+	    .text(function(d){return 1;
+	    });
+
+	var popupGross = popupBox.append("p")
+	    .attr("class","dataLabel")
+	    .text(function(d){return 1;
+	    });
+
+	var popupData = popupBox
+	    .append("div")
+	    .attr("class","dataBox") 
+	    .selectAll("div")
+	    .data(dialogueArray,function(d){
+	      	return d;
+	    	})
+	    .enter()
+	    .append("div")
+	    .attr("class","dataRow");
+
+
+	var popupDialogueDataLabel = popupData.append("p")
+	    .attr("class","dialogueLabel")
+	    .text(function(d,i){
+	      if(i==0){
+	        return "Female Dialogue:";
+	      }
+	      return "Male Dialogue:";
+	    });
+
+	var popupDataBar = popupData.append("div")
+	    .attr("class","dataBar")
+	    .style("width",function(d){
+	        return dataBarScale(d) + "px";
+	        })
+	    .style("background-color",function(d,i){
+	        if (i==0){
+	          return "red";
+	        }
+	          return "blue";
+	        });
+
+
+	var percentFormat = d3.format(".0%");
+
+	var popupPercent = popupData.append("p")
+	    .attr("class","dataPercent")
+	    .text(function(d){
+	      return percentFormat(d);
+	    });
+
+	var crewArray = ["f","f","f"];
+
+	var popupCrew = popupBox
+	    .append("div")
+	    .attr("class","dataBox") 
+	    .selectAll("div")
+	    .data(crewArray,function(d){
+	      	return d;
+	    	})
+	    .enter()
+	    .append("div")
+	    .attr("class","dataRow");
+
+	var popupWriterLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Writer: ");
+
+	var popupWriter = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+	var popupDirectorLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Director: ");
+
+	var popupDirector = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+	var popupProducerLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Producer: ");
+
+	var popupProducer = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+
+
+	function outputUpdate(value) {
+		document.getElementById("enable").innerHTML = value;
+
 	}
-	plotPiChart(men,women);
+
+	d3.csv("movies3.csv", function(error, rows) {
+		data = d3.map(rows, function(row) {
+			return row.script_id;
+		});
+		rows.forEach(function (line) {
+			if (line.percentage_male >0.5){
+				men.push(line.script_id);
+			}
+			else{
+				women.push(line.script_id);
+			}
+		});
+
+		var circles = svg.selectAll("circle").data(rows); //.attr("class", "points")
+
+		circles.enter()
+			.append("circle")
+			.attr("cx", width/2)
+		  	.attr("cy", height/2)
+		  	.attr("r", 6 )
+		  	.style("opacity", .6)
+		  	.style("fill", function(d) {
+		    	var returnColor = "blue";
+		    	if (d.percentage_male > .5) { returnColor = "blue";}
+		    	else  { returnColor = "red"; }
+		    	return returnColor;})
+		  	.on("mouseover", function(d) {
+				d3.select(this).style("stroke","black").style("stroke-width", 2);
+	            tooltipMouseover(d);})             
+		  	.on("mouseout", function(d) {  
+		  		d3.select(this).style("stroke",null);     
+		    	popupBox.transition().duration(200).style("opacity", 0);});
+
+		filtered = men.concat(women); 	
+		plotPiChart(men, women, unfiltered);
+
+		function filterYear(year,array){
+			activeArray =[];
+			array.forEach(function(id) {
+				if (data._[id].year==year){
+					activeArray.push(id);
+				}
+			});
+			return activeArray;
+		}
+
+		function filterRoleByGender(role,gender,array){
+			activeArray=[];
+			array.forEach(function (id) {
+				if (data._[id][role]==gender){
+					activeArray.push(id);
+				}
+			})
+			return activeArray;
+		}
+
+		//applys all filters and changes array values
+		function applyFilters(){
+			filteredMen = men;
+			filteredWomen = women;
+			unfilteredMen=[];
+			unfilteredWomen=[];
+			unfiltered = [];
+			filtered = [];
+
+			//console.log(filteredWomen.length + filteredMen.length);
+
+			if (directorGender!="all"){
+				filteredMen = filterRoleByGender("director", directorGender, filteredMen);
+				filteredWomen = filterRoleByGender("director", directorGender, filteredWomen);
+			}
+				console.log("success1");
+			if (producerGender!="all"){
+				filteredMen = filterRoleByGender("producer", producerGender, filteredMen);
+				filteredWomen = filterRoleByGender("producer", producerGender, filteredWomen);
+			}
+				console.log("success2");
+
+			if (writerGender!="all"){
+				filteredMen = filterRoleByGender("writer", writerGender, filteredMen);
+				filteredWomen = filterRoleByGender("writer", writerGender, filteredWomen);
+			}
+				console.log("success3");
+
+			if(year!="All"){
+				console.log(year);
+				filteredMen = filterYear(year,filteredMen);
+				filteredWomen = filterYear(year, filteredWomen);
+			}
+
+			//console.log(filteredWomen.length + filteredMen.length);
+
+
+			for (var i = 0; i <men.length; i++) {
+				var inMFiltered = 0;
+
+				for (var j = 0; j<filteredMen.length; j++) {
+					if(filteredMen[j] == men[i]){
+						inMFiltered = 1;
+					}
+				};
+
+				if(inMFiltered == 0){
+					unfiltered.push(men[i]);
+				}
+			};
+
+
+			for (var i = 0; i <women.length; i++) {
+				var inWFiltered = 0;
+				
+				for (var j = 0; j<filteredWomen.length; j++) {
+					if(filteredWomen[j] == women[i]){
+						inWFiltered = 1;
+					}
+				};
+
+				if(inWFiltered == 0){
+					unfiltered.push(women[i]);
+				}
+			};
+
+			//console.log(unfiltered.length);
+
+
+			d3.selectAll("line").remove();
+			//d3.selectAll("circle").remove();
+			//plotGreyPiChart(men,women);
+
+			filtered = filteredMen.concat(filteredWomen);
+
+			if(page == "piChart") {
+				plotPiChart(filteredMen,filteredWomen, unfiltered);
+			}
+			else if (page == "histogram") {
+				byPercentageHistogram(filtered, unfiltered);
+			}
+			else {byRevenueScatterPlot(filtered, unfiltered);}
+			
+			
+
+		}
+
+		$('.filter').click( function() {
+			//add style to active button, remove from
+			$(this).siblings().removeClass('active');
+	    	$(this).addClass('active');
+	    	//assign active buttons to variables
+	  
+	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
+	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
+	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
+	    	
+	    	page = $('.pages-filter').find('.active').attr('id');
+
+	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
+	    	//console.log(year);
+	    	applyFilters();
+		});
+
+		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
+
+
+
+		function plotPiChart(men, women, unfiltered){
+
+			//Clear current setup
+			d3.selectAll(".axis").remove();
+			svg.select(".outerCircle").remove();
+			svg.select(".innerCircle").remove();
+			svg.selectAll("line").style("stroke", null);
+
+
+			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
+			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10; //size of Pi Chart
+			if (men.length+women.length==0){
+				Radius = 0;
+				Theta = 0;
+			}
+
+			svg.append("circle").attr("class", "innerCircle")
+				.attr("r", Radius).attr("cx",width/2).attr("cy",height/2)
+				.style("fill", "white").style("stroke", "black").moveToBack();
+			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
+			// line dependent on Theta
+			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
+
+			//outside circle
+			var bigTheta = (153/(763))*2*Math.PI; 
+			var bigRadius = Math.sqrt(((763)/Math.PI+Math.sqrt(763)))*12 +Math.cos(bigTheta)*Math.cos(bigTheta)*10;
+
+			svg.append("circle")
+				.attr("class", "outerCircle")
+				.attr("r", bigRadius)
+				.attr("cx",width/2)
+				.attr("cy",height/2)
+				.style("fill", "rgba(0,0,0,.25)")
+				.style("stroke", "black")
+				.moveToBack();
+
+			var wfill = false;
+			var padding = 1;
+			var r = 5;
+			var wx = r+padding;
+			var wy = r+padding;
+			var wcount = women.length;
+
+			// var xFilteredOldLocations = []; //holds all original x locations of filtered points
+			// var yFilteredOldLocations = []; //holds all original y locations of filtered points
+
+			//plots all points where women have more speaking parts
+			while (wcount>0){
+				var d = r+padding;
+				if (Theta<Math.PI){
+					wx=(1/Math.tan(Theta))*(wy)+(1/Math.sin(Theta))*(r+padding);
+					if (wy+r+padding<Radius && (wx+r)*(wx+r)+(wy+r)*(wy+r)>Radius*Radius){
+						wx = r+padding;
+						wfill = true;
+					}
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						if (wfill){
+
+							if(women[wcount]>0){
+							wcount-=1;
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
+							data._[women[wcount]].cx = (width)/2-wx;
+							data._[women[wcount]].cy = height/2 -wy; };
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+							
+						}
+
+						wcount-=1;
+
+						if(women[wcount]>0){
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
+							data._[women[wcount]].cx = (width)/2+wx;
+							data._[women[wcount]].cy = height/2 -wy;
+						}
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
+
+						
+						wx+=(r+padding)*2;
+					}
+						wy+=(r+padding)*2;
+					}
+				else{
+					wx2 = (1/Math.tan(Theta))*(wy)-(1/Math.sin(Theta))*(r+padding);
+					while((wx2+r)*(wx2+r)+(wy+r)*(wy+r)<Radius*Radius && wy>Math.sin(Theta)*Radius){
+						if (wcount==0){
+							break;
+						}
+
+						wcount-=1;
+						if(women[wcount]>0){
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
+							data._[women[wcount]].cx = (width)/2-wx2;
+							data._[women[wcount]].cy = height/2 +wy;};
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "blue");
+						
+						wx2+=(r+padding)*2;
+					}
+					wx2=r+padding;				
+					wx=r+padding;
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						wcount-=2;
+
+						if(women[wcount]>0){
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
+							data._[women[wcount]].cx = (width)/2+wx;
+							data._[women[wcount]].cy = height/2 -wy;};
+
+						if(women[wcount+1]>0){
+							// xFilteredOldLocations.push(data._[women[wcount+1]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount+1]].cy);
+							data._[women[wcount+1]].cx = (width)/2-wx;
+							data._[women[wcount+1]].cy = height/2 -wy;};
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
+						
+						wx+=(r+padding)*2;
+					}
+					wy+=(r+padding)*2;
+					wx=r+padding;
+				}
+			}
+
+			var mfill = false;
+			var mx = r+padding;
+			var my = r+padding;
+			var mcount = men.length;
+			var Theta2 = Math.PI*2-Theta;
+			// plots all points where men have more speaking parts
+			while (mcount>0){
+				if (Theta2<Math.PI){
+					mx=(1/Math.tan(Theta2))*(my)+(1/Math.sin(Theta2))*(r+padding);
+					if (my+r+padding<Radius && (mx+r)*(mx+r)+(my+r)*(my+r)>Radius*Radius){
+						mx = r+padding;
+						mfill = true;
+					}
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						if (mfill){
+							mcount-=1;
+							// xFilteredOldLocations.push(data._[men[mcount]].cx);
+							// yFilteredOldLocations.push(data._[men[mcount]].cy);
+							data._[men[mcount]].cx = (width)/2-mx;
+							data._[men[mcount]].cy = height/2 +my;
+
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+							
+						}
+
+						mcount-=1;
+						// xFilteredOldLocations.push(data._[men[mcount]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount]].cy);
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
+						
+
+						mx+=(r+padding)*2;
+					}
+						my+=(r+padding)*2;
+					}
+				else{
+					mx2 = (1/Math.tan(Theta2))*(my)-(1/Math.sin(Theta2))*(r+padding);
+					while((mx2+r)*(mx2+r)+(my+r)*(my+r)<Radius*Radius && my<Math.sin(Theta)*Radius){
+						if (mcount==0){
+							break;
+						}
+						mcount-=1;
+						// xFilteredOldLocations.push(data._[men[mcount]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount]].cy);
+						data._[men[mcount]].cx = (width)/2-mx2;
+						data._[men[mcount]].cy = height/2 -my;
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "red");
+						
+						mx2+=(r+padding)*2;
+					}
+					mx2=r+padding;				
+					mx=r+padding;
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+
+						mcount-=2;
+
+						if(men[mcount]>=0){
+						// xFilteredOldLocations.push(data._[men[mcount]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount]].cy);
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;};
+
+						// xFilteredOldLocations.push(data._[men[mcount+1]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount+1]].cy);
+						if(men[mcount+1]>=0){
+						data._[men[mcount+1]].cx = (width)/2-mx;
+						data._[men[mcount+1]].cy = height/2 +my;};
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
+						
+						mx+=(r+padding)*2;
+					}
+					my+=(r+padding)*2;
+					mx=r+padding;
+				}
+			}
+
+			for (var i = 0; i < unfiltered.length; i++) {
+				if(data._[unfiltered[i]].cx >= width/2){
+					data._[unfiltered[i]].cx = width+10;
+				} 
+				else{ data._[unfiltered[i]].cx = -10;
+				}
+			};
+
+			//x and y locations of previous icons that are now moved inside the new radius
+			// var xOpenSpaces = [];
+			// var yOpenSpaces = [];
+			// var counter = 0;
+
+			// for (var i = 0; i <xFilteredOldLocations.length; i++) 
+			// {
+			// 	var distance = Math.sqrt(((xFilteredOldLocations[i]-width/2)*(xFilteredOldLocations[i]-width/2)) + ((yFilteredOldLocations[i] - height/2)*(yFilteredOldLocations[i] - height/2)));
+
+			// 	if (distance > Radius) {
+			// 		xOpenSpaces.push(xFilteredOldLocations[i]);
+			// 		yOpenSpaces.push(yFilteredOldLocations[i]);
+			// 	};
+			// };
+
+			// for (var i = 0; i < unfiltered.length; i++) 
+			// {
+			// 	var xUnfiltered = data._[unfiltered[i]].cx;
+			// 	var yUnfiltered = data._[unfiltered[i]].cy;
+			// 	var unfilteredDistance = Math.sqrt(((xUnfiltered-width/2)*(xUnfiltered-width/2)) + ((yUnfiltered-height/2)*(yUnfiltered-height/2)));
+
+			// 	if (unfilteredDistance < Radius) {
+			// 		data._[unfiltered[i]].cx = xOpenSpaces[counter];
+			// 		data._[unfiltered[i]].cy = yOpenSpaces[counter];
+			// 		counter++;
+			// 	};
+
+			// };
+
+			//console.log(xOpenSpaces);
+
+			circles.transition().duration(1250)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", 5);
+
+			// circles.style("fill", function(d){
+			// 	if(Math.sqrt((d.cx-width/2)*(d.cx-width/2) + (d.cy-height/2)*(d.cy-height/2)) > Radius)
+			// 	{
+			// 		return "rgba(0,0,0,.125)";
+			// 	}
+			// });
+
+		}
+
+			
+		
+
+		function tooltipMouseover (d)
+		{
+
+			popupName.text(d.title);
+
+			popupYear.text(d.year);
+
+			popupGross.text("$" + d.gross + "M Revenue");
+
+		   	popupData.data([1-d.percentage_male,d.percentage_male]).enter();
+
+		   	popupData.select(".dataPercent")
+		        .text(function(d){
+		          return percentFormat(d);
+		        });
+			
+			popupData.select(".dataBar")
+		        .transition()
+		        .duration(200)
+		        .style("width",function(d){
+		          return dataBarScale(d) + "px";
+		        });
+
+		    popupWriter.text(d.writer)
+		    	.style("text-transform", "uppercase")
+		    	.style("color", function (){
+		    		if(d.writer == "m") {return "blue";}
+		    		return "red";
+		    	});
+
+		    popupDirector.text(d.director)
+		    	.style("text-transform", "uppercase")
+		    	.style("color", function(){
+		    		if(d.director == "m") {return "blue";}
+		    		return "red";
+		    	});
+			popupProducer.text(d.producer)
+				.style("text-transform", "uppercase")
+		    	.style("color", function(){
+		    		if(d.producer == "m") {return "blue";}
+		    		return "red";
+		    	});
+
+			popupBox.transition()
+		        .duration(100)
+		        .style("opacity", .95);
+
+
+		    popupBox.style("left", (d3.event.pageX + 10) + "px")
+		            .style("top", (d3.event.pageY - 20)+ "px");
+
+
+		}
+
+
+		function plotGreyPiChart(men, women){
+
+			
+
+			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
+			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10;
+			svg.append("circle").attr("r", Radius).attr("cx",width/2).attr("cy",height/2).style("fill", "#ffffff").style("stroke", "white");
+			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "white");
+			// line dependent on Theta
+			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "white");
+
+			var wfill = false;
+			var r = 5; //size of data points
+			var padding = 1;
+			var wx = r+padding;
+			var wy = r+padding;
+			var wcount = women.length;
+			//plots all points where women have more speaking parts
+			while (wcount>0){
+				var d = r+padding;
+				if (Theta<Math.PI){
+					wx=(1/Math.tan(Theta))*(wy)+(1/Math.sin(Theta))*(r+padding);
+					if (wy+r+padding<Radius && (wx+r)*(wx+r)+(wy+r)*(wy+r)>Radius*Radius){
+						wx = r+padding;
+						wfill = true;
+					}
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+						if (wfill){
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+							wcount-=1;
+							data._[women[wcount]].cx = (width)/2-wx;
+							data._[women[wcount]].cy = height/2 -wy;
+						}
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+
+						wcount-=1;
+						data._[women[wcount]].cx = (width)/2+wx;
+						data._[women[wcount]].cy = height/2 -wy;
+
+						wx+=(r+padding)*2;
+					}
+						wy+=(r+padding)*2;
+					}
+				else{
+					wx2 = (1/Math.tan(Theta))*(wy)-(1/Math.sin(Theta))*(r+padding);
+					while((wx2+r)*(wx2+r)+(wy+r)*(wy+r)<Radius*Radius && wy>Math.sin(Theta)*Radius){
+						if (wcount==0){
+							break;
+						}
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "rgba(0,0,0,.125)");
+
+						wcount-=1;
+						data._[women[wcount]].cx = (width)/2-wx2;
+						data._[women[wcount]].cy = height/2 +wy;
+
+						wx2+=(r+padding)*2;
+					}
+					wx2=r+padding;				
+					wx=r+padding;
+					while((wx+r)*(wx+r)+(wy+r)*(wy+r)<Radius*Radius){
+						if (wcount==0){
+							break;
+						}
+
+						wcount-=2;
+						data._[women[wcount]].cx = (width)/2+wx;
+						data._[women[wcount]].cy = height/2 -wy;
+
+						data._[women[wcount+1]].cx = (width)/2-wx;
+						data._[women[wcount+1]].cy = height/2 -wy;
+
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "rgba(0,0,0,.125)");
+						
+						wx+=(r+padding)*2;
+					}
+					wy+=(r+padding)*2;
+					wx=r+padding;
+				}
+			}
+			var mfill = false;
+			var mx = r+padding;
+			var my = r+padding;
+			var mcount = men.length;
+			var Theta2 = Math.PI*2-Theta;
+			// plots all points where men have more speaking parts
+			while (mcount>0){
+				if (Theta2<Math.PI){
+					mx=(1/Math.tan(Theta2))*(my)+(1/Math.sin(Theta2))*(r+padding);
+					if (my+r+padding<Radius && (mx+r)*(mx+r)+(my+r)*(my+r)>Radius*Radius){
+						mx = r+padding;
+						mfill = true;
+					}
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						if (mfill){
+							mcount-=1;
+							data._[men[mcount]].cx = (width)/2-mx;
+							data._[men[mcount]].cy = height/2 +my;
+
+							// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+							
+						}
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						mcount-=1;
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+
+						mx+=(r+padding)*2;
+					}
+						my+=(r+padding)*2;
+					}
+				else{
+					mx2 = (1/Math.tan(Theta2))*(my)-(1/Math.sin(Theta2))*(r+padding);
+					while((mx2+r)*(mx2+r)+(my+r)*(my+r)<Radius*Radius && my<Math.sin(Theta)*Radius){
+						if (mcount==0){
+							break;
+						}
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "rgba(0,0,0,.125)");
+						mcount-=1;
+						data._[men[mcount]].cx = (width)/2-mx2;
+						data._[men[mcount]].cy = height/2 -my;
+
+						mx2+=(r+padding)*2;
+					}
+					mx2=r+padding;				
+					mx=r+padding;
+					while((mx+r)*(mx+r)+(my+r)*(my+r)<Radius*Radius){
+						if (mcount==0){
+							break;
+						}
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "rgba(0,0,0,.125)");
+						mcount-=2;
+						data._[men[mcount]].cx = (width)/2+mx;
+						data._[men[mcount]].cy = height/2 +my;
+
+						data._[men[mcount+1]].cx = (width)/2-mx;
+						data._[men[mcount+1]].cy = height/2 +my;
+
+						mx+=(r+padding)*2;
+					}
+					my+=(r+padding)*2;
+					mx=r+padding;
+				}
+			}
+
+			circles.transition().duration(1000)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", 5);
+		}
+
+		$(".histogram").click(function() {
+			applyFilters();
+			byPercentageHistogram(filtered, unfiltered);
+		});
+
+		$(".piChart").click(function() {
+			applyFilters();
+			plotPiChart(filteredMen, filteredWomen, unfiltered);
+		});
+
+		function byPercentageHistogram(filtered, unfiltered)
+		{
+			d3.selectAll(".axis").remove();
+			svg.select(".outerCircle").remove();
+			svg.select(".innerCircle").remove();
+			svg.selectAll("line").style("stroke", null);
+			
+			var percentageData = [];
+
+			for (var i = 0; i < filtered.length; i++) 
+			{
+				//console.log(data._[filtered[i]]);
+				percentageData.push(100*data._[filtered[i]].percentage_male);
+			};
+
+			//console.log(percentageData);
+
+			var binCounter = d3.layout.histogram().bins(20).range([d3.min(percentageData), d3.max(percentageData)]);
+
+			var bins = binCounter(percentageData);
+
+			var xScale = d3.scale.linear()
+				.domain([0, 105])
+				.range([width/4, 3*width/4]);
+
+			var yScale = d3.scale.linear()
+				.domain([0,
+					d3.max(bins, function (bin) {
+						 return bin.y;
+					 }) +5])
+				.range([3*height/4, graphPadding]);
+
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
+			svg.append("g")
+				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("class", "axis")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("transform", "translate(" + width/4 + ",0)")
+				.attr("class", "axis")
+				.call(yAxis);
+
+
+			var yHeights = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+			for (var i = 0; i < filtered.length; i++) 
+			{
+				yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] = yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] + 1;
+			};
+
+			// rows.forEach(function (line) {
+			// 	yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] + 1;
+			// })
+
+
+			for (var i = 0; i < filtered.length; i++) 
+			{
+				data._[filtered[i]].cx = xScale(Math.floor(data._[filtered[i]].percentage_male*100/5)*5);
+				data._[filtered[i]].cy = yScale(yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)]);
+				yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] = yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] - 1;
+			};
+
+			// rows.forEach(function (line) {
+			// 	line.cx=xScale(Math.floor(line.percentage_male*100/5)*5);
+			// 	line.cy=yScale(yHeights[Math.floor(line.percentage_male*100/5)]);
+			// 	yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] - 1;
+			// })	
+
+			for (var i = 0; i < unfiltered.length; i++) {
+				if(data._[unfiltered[i]].cx >= width/2){
+					data._[unfiltered[i]].cx = width+10;
+				} 
+				else{data._[unfiltered[i]].cx = -10;
+				}
+			};
+
+			circles.transition().duration(1000)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", 5);
+
+			svg.selectAll("circle").style("stroke", null);
+			svg.selectAll("line").style("stroke", null);
+
+
+		}
+
+		$(".scatterplot").click(function() {
+			byRevenueScatterPlot(filtered, unfiltered);
+		});
+
+		function byRevenueScatterPlot(filtered, unfiltered)
+		{
+			d3.selectAll(".axis").remove();
+			svg.select(".outerCircle").remove();
+			svg.select(".innerCircle").remove();
+			svg.selectAll("line").style("stroke", null);
+			
+			var percentageData = [];
+			var revenueData = [];
+
+			for (var i = 0; i < filtered.length; i++) 
+			{
+				//console.log(data._[filtered[i]]);
+				percentageData.push(100*data._[filtered[i]].percentage_male);
+				revenueData.push(data._[filtered[i]].gross)
+			};
+
+			//console.log(revenueData);
+
+			var xScale = d3.scale.linear()
+				.domain([0, 100])
+				.range([width/4, 3*width/4]);
+
+			//console.log(Math.max.apply(null, revenueData));
+
+			var yScale = d3.scale.linear()
+				.domain([0, Math.max.apply(null, revenueData)])
+				.range([3*height/4, graphPadding]);
+
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
+			svg.append("g")
+				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("class", "axis")
+				.call(xAxis);
+
+			svg.append("g")
+				.attr("transform", "translate(" + width/4 + ",0)")
+				.attr("class", "axis")
+				.call(yAxis);
+
+			for (var i = 0; i <filtered.length; i++) {
+				data._[filtered[i]].cy = yScale(data._[filtered[i]].gross);
+				data._[filtered[i]].cx = xScale(100*data._[filtered[i]].percentage_male);
+			};
+
+			for (var i = 0; i < unfiltered.length; i++) {
+				if(data._[unfiltered[i]].cx >= width/2){
+					data._[unfiltered[i]].cx = width+10;
+				} 
+				else{
+					data._[unfiltered[i]].cx = -10;
+				}
+			};
+
+			// circles.attr("r", function(d)
+			// {
+			// 	if(d.cx != -10 && d.cx != width+10)
+			// 	{
+			// 		var newRadius =  15*d.gross/Math.max.apply(null, revenueData);
+			// 		console.log(newRadius);
+			// 		return newRadius;
+			// 	};
+			// });
+
+			circles.transition().duration(1000)
+			.attr("cx", function(d) { return d.cx; })
+			.attr("cy", function(d) { return d.cy; })
+			.attr("r", function(d)
+			{
+				if(d.cx != -10 && d.cx != width+10)
+				{
+					var newRadius =  30*d.gross/Math.max.apply(null, revenueData);
+					//console.log(newRadius);
+					return newRadius;
+				};
+			});		
+			
+
+		}
+
+
+	});
 	</script>
 
 </body>
