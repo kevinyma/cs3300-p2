@@ -145,3 +145,8 @@ body {
         stroke: black;
         shape-rendering: crispEdges;
     }
+
+    .axis text {
+        font-size: 11px;
+        text-transform: capitalize;
+    }
