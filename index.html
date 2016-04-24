@@ -248,16 +248,20 @@
 		  		d3.select(this).style("stroke",null);     
 		    	popupBox.transition().duration(200).style("opacity", 0);})
 		  	.on("click", function(d){
-		  		d3.select(this).moveToFront();
-
-		  		d3.select(this).transition().duration(1000)
-					.attr("cx", width/2)
-					.attr("cy", height/2)
-					.attr("r", 250)
-					.style("opacity", 1)
-					.style("fill", "gainsboro");
-				
-		  		byCharacter(d);
+		  		if(d3.select(this).attr("r") == 250){
+		  			applyFilters();
+		  		}
+		  		else{
+		  			d3.select(this).moveToFront();
+			  		d3.select(this).transition().duration(1000)
+						.attr("cx", width/2)
+						.attr("cy", height/2)
+						.attr("r", 250)
+						.style("opacity", 1)
+						.style("fill", "gainsboro");
+					
+			  		byCharacter(d);
+		  		}
 		  	});
 
 
@@ -1005,13 +1009,13 @@
 			//console.log(Math.max.apply(null, revenueData));
 			var yScale = d3.scale.linear()
 				.domain([0, maxWords])
-				.range([3*height/4, graphPadding + 50]);
+				.range([3*height/4-20, graphPadding + 50]);
 
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			svg.append("g")
-				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("transform", "translate(0," + (3*height/4 - 20) + ")")
 				.attr("class", "xAxis axis")
 				.call(xAxis);
 
@@ -1033,7 +1037,7 @@
 	               .attr("x", xScale(characterArray[i].name))
 	               .attr("y", yScale(characterArray[i].words))
 	               .attr("width", xScale.rangeBand())
-	               .attr("height", 3*height/4 - yScale(characterArray[i].words))
+	               .attr("height", 3*height/4 - 20 - yScale(characterArray[i].words))
 	               .attr("fill", function(){
 	               		if(characterArray[i].gender == "m"){
 	               			return "blue";
