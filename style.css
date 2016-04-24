@@ -148,5 +148,20 @@ body {
 
     .axis text {
         font-size: 11px;
-        text-transform: capitalize;
+        text-transform: capitalize; 
+        
+
+    }
+    .nameAxis path,
+    .nameAxis line{
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+
+    .nameAxis text{
+        font-size: 11px;
+        text-transform: capitalize; 
+        text-align: right;
+        transform: translateY(5px) rotate(-45deg) translateX(-30px);
     }

@@ -372,6 +372,7 @@
 		function plotPiChart(men, women, unfiltered){
 			//Clear current setup
 			d3.selectAll(".axis").remove();
+			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
@@ -385,9 +386,9 @@
 			svg.append("circle").attr("class", "innerCircle")
 				.attr("r", Radius).attr("cx",width/2).attr("cy",height/2)
 				.style("fill", "white").style("stroke", "black").moveToBack();
-			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).style("stroke", "black");
+			svg.append("line").attr("x1", width/2+Radius).attr("y1",height/2).attr("x2",width/2).attr("y2", height/2).transition().delay(800).style("stroke", "black").style("stroke-width", 1.5);
 			// line dependent on Theta
-			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).style("stroke", "black");
+			svg.append("line").attr("x1",width/2).attr("y1",height/2).attr("x2", width/2+Radius*Math.cos(Theta)).attr("y2", (height/2)-Radius*Math.sin(Theta)).transition().delay(800).style("stroke", "black").style("stroke-width", 1.5);
 			//outside circle
 			var bigTheta = (153/(763))*2*Math.PI; 
 			var bigRadius = Math.sqrt(((763)/Math.PI+Math.sqrt(763)))*12 +Math.cos(bigTheta)*Math.cos(bigTheta)*10;
@@ -811,6 +812,7 @@
 		function byPercentageHistogram(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
@@ -838,10 +840,12 @@
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 			svg.append("g")
 				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.transition().delay(800)
 				.attr("class", "axis")
 				.call(xAxis);
 			svg.append("g")
 				.attr("transform", "translate(" + width/4 + ",0)")
+				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
 			var yHeights = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -890,6 +894,7 @@
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
@@ -913,14 +918,19 @@
 				.range([3*height/4, graphPadding]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
-			svg.append("g")
+
+			svg.append("g")	
 				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.transition().delay(800)
 				.attr("class", "axis")
 				.call(xAxis);
+
 			svg.append("g")
 				.attr("transform", "translate(" + width/4 + ",0)")
+				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
+
 			for (var i = 0; i <filtered.length; i++) {
 				data._[filtered[i]].cy = yScale(data._[filtered[i]].gross);
 				data._[filtered[i]].cx = xScale(100*data._[filtered[i]].percentage_male);
@@ -1016,34 +1026,39 @@
 
 			svg.append("g")
 				.attr("transform", "translate(0," + (3*height/4 - 20) + ")")
-				.attr("class", "xAxis axis")
+				.transition().delay(700)
+				.attr("class", "xAxis nameAxis")
 				.call(xAxis);
 
 			svg.append("g")
 				.attr("transform", "translate(" + (width/4 + 50) + ",0)")
+				.transition().delay(700)
 				.attr("class", "axis")
 				.call(yAxis);
 
-			svg.selectAll(".xAxis text")
-          		.attr("transform", function(d) {
-             		return "translate(" + (this.getBBox().height*-2)+ "," + (this.getBBox().height + 10) + ")rotate(-45)";
-             	});
+			// svg.selectAll(".xAxis text")
+   //        		.attr("transform", function(d) {
+   //           		return "translate(" + (this.getBBox().height*-2)+ "," + (this.getBBox().height + 10) + ")rotate(-45)";
+   //           	});
 
              console.log(characterArray.length);
 
             for (var i = 0; i <characterArray.length; i++) {
 
             	svg.append("rect")
+            		.attr("fill", function(){
+	               		if(characterArray[i].gender == "m"){
+	               			return "blue";
+	               		}
+	               		return "red";})
+            		.transition().delay(700)
 	               .attr("x", xScale(characterArray[i].name))
 	               .attr("y", yScale(characterArray[i].words))
 	               .attr("width", xScale.rangeBand())
 	               .attr("height", 3*height/4 - 20 - yScale(characterArray[i].words))
-	               .attr("fill", function(){
-	               		if(characterArray[i].gender == "m"){
-	               			return "blue";
-	               		}
-	               		return "red";
-	               });
+	               
+	               
+	               ;
             	
             };
 
