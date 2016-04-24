@@ -19,12 +19,10 @@
 <body>
 	<h2>Key Creative Roles in Film</h2>
 
-	<div class = "pages">
-		<!-- <div id = "piChart" class = "filter front-curve active">Male vs. Female Dialogue</div>	 -->
 		<button id = "button" class = "piChart">Male vs. Female Dialogue</button>
 		<button id = "button2" class = "histogram">Breakdown By Percentage</button>
 		<button id = "button3" class = "scatterplot">Gross Revenue</button>
-	</div>
+
 
 	<div class="all-filters">
 		<div class="filter-group director-filter">
@@ -237,11 +235,11 @@
 		    	else  { returnColor = "red"; }
 		    	return returnColor;})
 		  	.on("mouseover", function(d) {
-				d3.select(this).style("stroke","black");
+				d3.select(this).style("stroke","black").style("stroke-width", 2);
 	            tooltipMouseover(d);})             
 		  	.on("mouseout", function(d) {  
 		  		d3.select(this).style("stroke",null);     
-		    	popupBox.transition().duration(300).style("opacity", 0);});
+		    	popupBox.transition().duration(200).style("opacity", 0);});
 
 		filtered = men.concat(women); 	
 		plotPiChart(men, women, unfiltered);
@@ -273,6 +271,7 @@
 			unfilteredMen=[];
 			unfilteredWomen=[];
 			unfiltered = [];
+			filtered = [];
 
 			//console.log(filteredWomen.length + filteredMen.length);
 
@@ -299,7 +298,7 @@
 				filteredWomen = filterYear(year, filteredWomen);
 			}
 
-			//console.log(filteredWomen.length + filteredMen.length);
+			console.log(filteredWomen.length + filteredMen.length);
 
 
 			for (var i = 0; i <men.length; i++) {
@@ -405,8 +404,8 @@
 			var wy = r+padding;
 			var wcount = women.length;
 
-			var xFilteredOldLocations = []; //holds all original x locations of filtered points
-			var yFilteredOldLocations = []; //holds all original y locations of filtered points
+			// var xFilteredOldLocations = []; //holds all original x locations of filtered points
+			// var yFilteredOldLocations = []; //holds all original y locations of filtered points
 
 			//plots all points where women have more speaking parts
 			while (wcount>0){
@@ -425,8 +424,8 @@
 
 							if(women[wcount]>0){
 							wcount-=1;
-							xFilteredOldLocations.push(data._[women[wcount]].cx);
-							yFilteredOldLocations.push(data._[women[wcount]].cy);
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
 							data._[women[wcount]].cx = (width)/2-wx;
 							data._[women[wcount]].cy = height/2 -wy; };
 							// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
@@ -436,8 +435,8 @@
 						wcount-=1;
 
 						if(women[wcount]>0){
-							xFilteredOldLocations.push(data._[women[wcount]].cx);
-							yFilteredOldLocations.push(data._[women[wcount]].cy);
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
 							data._[women[wcount]].cx = (width)/2+wx;
 							data._[women[wcount]].cy = height/2 -wy;
 						}
@@ -457,8 +456,8 @@
 
 						wcount-=1;
 						if(women[wcount]>0){
-							xFilteredOldLocations.push(data._[women[wcount]].cx);
-							yFilteredOldLocations.push(data._[women[wcount]].cy);
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
 							data._[women[wcount]].cx = (width)/2-wx2;
 							data._[women[wcount]].cy = height/2 +wy;};
 						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "blue");
@@ -474,14 +473,14 @@
 						wcount-=2;
 
 						if(women[wcount]>0){
-							xFilteredOldLocations.push(data._[women[wcount]].cx);
-							yFilteredOldLocations.push(data._[women[wcount]].cy);
+							// xFilteredOldLocations.push(data._[women[wcount]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount]].cy);
 							data._[women[wcount]].cx = (width)/2+wx;
 							data._[women[wcount]].cy = height/2 -wy;};
 
 						if(women[wcount+1]>0){
-							xFilteredOldLocations.push(data._[women[wcount+1]].cx);
-							yFilteredOldLocations.push(data._[women[wcount+1]].cy);
+							// xFilteredOldLocations.push(data._[women[wcount+1]].cx);
+							// yFilteredOldLocations.push(data._[women[wcount+1]].cy);
 							data._[women[wcount+1]].cx = (width)/2-wx;
 							data._[women[wcount+1]].cy = height/2 -wy;};
 
@@ -514,8 +513,8 @@
 						}
 						if (mfill){
 							mcount-=1;
-							xFilteredOldLocations.push(data._[men[mcount]].cx);
-							yFilteredOldLocations.push(data._[men[mcount]].cy);
+							// xFilteredOldLocations.push(data._[men[mcount]].cx);
+							// yFilteredOldLocations.push(data._[men[mcount]].cy);
 							data._[men[mcount]].cx = (width)/2-mx;
 							data._[men[mcount]].cy = height/2 +my;
 
@@ -524,8 +523,8 @@
 						}
 
 						mcount-=1;
-						xFilteredOldLocations.push(data._[men[mcount]].cx);
-						yFilteredOldLocations.push(data._[men[mcount]].cy);
+						// xFilteredOldLocations.push(data._[men[mcount]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount]].cy);
 						data._[men[mcount]].cx = (width)/2+mx;
 						data._[men[mcount]].cy = height/2 +my;
 						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
@@ -542,8 +541,8 @@
 							break;
 						}
 						mcount-=1;
-						xFilteredOldLocations.push(data._[men[mcount]].cx);
-						yFilteredOldLocations.push(data._[men[mcount]].cy);
+						// xFilteredOldLocations.push(data._[men[mcount]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount]].cy);
 						data._[men[mcount]].cx = (width)/2-mx2;
 						data._[men[mcount]].cy = height/2 -my;
 						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "red");
@@ -560,13 +559,14 @@
 						mcount-=2;
 
 						if(men[mcount]>=0){
-						xFilteredOldLocations.push(data._[men[mcount]].cx);
-						yFilteredOldLocations.push(data._[men[mcount]].cy);
+						// xFilteredOldLocations.push(data._[men[mcount]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount]].cy);
 						data._[men[mcount]].cx = (width)/2+mx;
-						data._[men[mcount]].cy = height/2 +my;
+						data._[men[mcount]].cy = height/2 +my;};
 
-						xFilteredOldLocations.push(data._[men[mcount+1]].cx);
-						yFilteredOldLocations.push(data._[men[mcount+1]].cy);
+						// xFilteredOldLocations.push(data._[men[mcount+1]].cx);
+						// yFilteredOldLocations.push(data._[men[mcount+1]].cy);
+						if(men[mcount+1]>=0){
 						data._[men[mcount+1]].cx = (width)/2-mx;
 						data._[men[mcount+1]].cy = height/2 +my;};
 						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
@@ -618,7 +618,7 @@
 
 			//console.log(xOpenSpaces);
 
-			circles.transition().duration(1000)
+			circles.transition().duration(1250)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
 			.attr("r", 5);
@@ -679,7 +679,7 @@
 		    	});
 
 			popupBox.transition()
-		        .duration(150)
+		        .duration(100)
 		        .style("opacity", .95);
 
 
@@ -939,7 +939,7 @@
 				}
 			};
 
-			circles.transition().duration(1500)
+			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
 			.attr("r", 5);
@@ -1024,14 +1024,14 @@
 			// 	};
 			// });
 
-			circles.transition().duration(1500)
+			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
 			.attr("r", function(d)
 			{
 				if(d.cx != -10 && d.cx != width+10)
 				{
-					var newRadius =  20*d.gross/Math.max.apply(null, revenueData);
+					var newRadius =  30*d.gross/Math.max.apply(null, revenueData);
 					console.log(newRadius);
 					return newRadius;
 				};
