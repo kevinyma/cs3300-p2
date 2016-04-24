@@ -13,15 +13,22 @@
 	<style>
 	slider { width:10px; }
 
-
 	</style>
 </head>
 <body>
 	<h2>Key Creative Roles in Film</h2>
 
+	<div class="filter-group pages-filter">
+		<p class="filter-label">Pages</p>
+		<p id="piChart" class="filter front-curve active">Male vs. Female Dialogue</p>
+		<p id="histogram" class="filter">Percentage Breakdown</p>
+		<p id="scatterplot" class="filter back-curve">Impact on Gross Revenue</p>
+	</div>
+<!-- 
+
 		<button id = "button" class = "piChart">Male vs. Female Dialogue</button>
 		<button id = "button2" class = "histogram">Breakdown By Percentage</button>
-		<button id = "button3" class = "scatterplot">Gross Revenue</button>
+		<button id = "button3" class = "scatterplot">Gross Revenue</button> -->
 
 
 	<div class="all-filters">
@@ -67,7 +74,7 @@
         });
     };
 
-	var width = 1000;
+	var width = 800;
 	var height = 500;
 	var graphPadding = 50;
 	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
@@ -86,6 +93,8 @@
 		producerGender = 'all',
 		writerGender = 'all'
 		year = 'All';
+
+	var page = "piChart";
 
 	// $("slider").slider();	
 	// $("enable").click(function() {
@@ -206,6 +215,7 @@
 
 	function outputUpdate(value) {
 		document.getElementById("enable").innerHTML = value;
+
 	}
 
 	d3.csv("movies3.csv", function(error, rows) {
@@ -298,7 +308,7 @@
 				filteredWomen = filterYear(year, filteredWomen);
 			}
 
-			console.log(filteredWomen.length + filteredMen.length);
+			//console.log(filteredWomen.length + filteredMen.length);
 
 
 			for (var i = 0; i <men.length; i++) {
@@ -337,9 +347,17 @@
 			//d3.selectAll("circle").remove();
 			//plotGreyPiChart(men,women);
 
-			
 			filtered = filteredMen.concat(filteredWomen);
-			plotPiChart(filteredMen,filteredWomen, unfiltered);
+
+			if(page == "piChart") {
+				plotPiChart(filteredMen,filteredWomen, unfiltered);
+			}
+			else if (page == "histogram") {
+				byPercentageHistogram(filtered, unfiltered);
+			}
+			else {byRevenueScatterPlot(filtered, unfiltered);}
+			
+			
 
 		}
 
@@ -352,6 +370,9 @@
 	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
 	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
 	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
+	    	
+	    	page = $('.pages-filter').find('.active').attr('id');
+
 	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
 	    	//console.log(year);
 	    	applyFilters();
@@ -996,20 +1017,16 @@
 				.attr("class", "axis")
 				.call(yAxis);
 
-			for (var i = 0; i <filtered.length; i++) 
-			{
+			for (var i = 0; i <filtered.length; i++) {
 				data._[filtered[i]].cy = yScale(data._[filtered[i]].gross);
 				data._[filtered[i]].cx = xScale(100*data._[filtered[i]].percentage_male);
 			};
 
-						for (var i = 0; i < unfiltered.length; i++) 
-			{
-				if(data._[unfiltered[i]].cx >= width/2)
-				{
+			for (var i = 0; i < unfiltered.length; i++) {
+				if(data._[unfiltered[i]].cx >= width/2){
 					data._[unfiltered[i]].cx = width+10;
 				} 
-				else
-				{
+				else{
 					data._[unfiltered[i]].cx = -10;
 				}
 			};
@@ -1032,7 +1049,7 @@
 				if(d.cx != -10 && d.cx != width+10)
 				{
 					var newRadius =  30*d.gross/Math.max.apply(null, revenueData);
-					console.log(newRadius);
+					//console.log(newRadius);
 					return newRadius;
 				};
 			});		
