@@ -5,6 +5,51 @@ body {
 	height: 100%;
 }
 
+p {
+    margin: 0;
+}
+
+.container {
+    width: 972px;
+    margin: 0 auto;
+    padding: 0;
+    text-align: left;
+    border-left: solid 1px #DDD;
+    border-right: solid 1px #DDD;
+    position: relative;
+}
+
+h2 {
+    font-size: 3rem;
+    font-weight: 400;
+    font-family: "Merriweather";
+}
+
+.textbox {
+    width: 500px;
+}
+
+.introduction {
+    margin-left: 10px;
+}
+
+/*====================Filters====================*/
+.filter-group {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.filter-label {
+    width: 50px;
+    text-align: right;
+    margin-right: 12px;
+    line-height: 27px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+
+    font-size: 1.2rem;
+    font-weight: 600;
+}
 
 .filter {
 	cursor: pointer;
@@ -13,54 +58,152 @@ body {
 	background: white;
     text-align: center;
     line-height: 25px;
-    font-weight: 400;
-    font-size: 13px;
     margin-top: 0px;
     margin-bottom: 0px;
     background-color: #fff;
     height: 25px;
-    font-size: 12px;
+
+    font-weight: 400;
+    font-size: 1.2rem;
 }
+
 .border{
     border: 1px solid rgba(127, 125, 156, 0.54);
 }
 
-.filter-label {
-	float: left;
-    width: 100px;
-    text-align: right;
-    MARGIN-RIGHT: 12PX;
-    LINE-HEIGHT: 27PX;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.filter-group {
-	display: flex;
-	margin-bottom: 5px;
-}
-
 .front-curve {
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .back-curve {
-	border-top-right-radius: 5px;
-	border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-.all-filters {
+/*====================Page Filter Specific====================*/
+
+.page-filter {
+    cursor: pointer;
+    padding: 0px 20px;
+    margin-left: 0px;
+    background: white;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: #fff;
+    height: 20px;
+    line-height: 20px;
+    color: rgba(0, 0, 0, 0.3);
+    border-left: 2px solid rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    font-size: 1.5rem;
 }
 
+.leftmost {
+    border-left: none;
+}
+
+
+/*====================Positioning====================*/
+
+.pages-filter {
+    margin-top: 20px;
+}
+
+.roles-filters {
+    position: absolute;
+    top: 170px;
+    left: 10px;
+}
+
+.legend {
+    width: 200px;
+    position: absolute;
+    top: 270px;
+    right: 0px;
+}
+
+.statistics {
+    width: 250px;
+    position: absolute;
+    top: 270px;
+    right: 0px;
+
+}
+
+/*====================Legend====================*/
+
+.legend-circle {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    vertical-align: baseline;
+    position: relative;
+    top: 0px;
+    color: red;
+}
+
+.label {
+    color: black;
+    margin: 0;
+    display: inline-block;
+    vertical-align: text-bottom;
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
+.legend-block {
+    display: block;
+}
+
+.red {
+    background: rgba(255, 0, 0, 0.6);
+}
+
+.blue {
+    background: rgba(0, 0, 255, 0.6);
+}
+
+/*====================Statistics====================*/
+
+.percent-women {
+    color:rgba(255, 0, 0, 0.6);
+    font-weight: 600;
+}
+
+.percent-men {
+    color: rgba(0, 0, 255, 0.6);
+    font-weight: 600;
+
+}
+
+
+
+
+/*====================Active/Hover States====================*/
 .active {
 	background-color: #F5F5F5;
     color: black;
     box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
     border-color: #adadad;
 }
+
+.pages-filter > .active {
+    background-color: white;
+    color: black;
+    box-shadow: none;
+    border-color: none;
+}
+
+.pages-filter > .filter:hover {
+    color: black;
+}
+
+
+
+/*====================Tooltips====================*/
 
     div.tooltip {   
         position: absolute;           
