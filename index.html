@@ -29,12 +29,6 @@
 		</div>
 
 
-	<!-- 
-			<button id = "button" class = "piChart">Male vs. Female Dialogue</button>
-			<button id = "button2" class = "histogram">Breakdown By Percentage</button>
-			<button id = "button3" class = "scatterplot">Gross Revenue</button> -->
-
-
 		<div class="roles-filters">
 			<div class="filter-group">
 				<p>When a films...</p>
@@ -206,6 +200,7 @@
 	          return "blue";
 	        });
 	var percentFormat = d3.format(".0%");
+	var revenueFormat = d3.format("$0M");
 	var popupPercent = popupData.append("p")
 	    .attr("class","dataPercent")
 	    .text(function(d){
@@ -271,7 +266,9 @@
 		    	else  { returnColor = "red"; }
 		    	return returnColor;})
 		  	.on("mouseover", function(d) {
-				d3.select(this).style("stroke","black").style("stroke-width", 2);
+		  		if(d3.select(this).attr("r") != 250){
+		  			d3.select(this).style("stroke","black").style("stroke-width", 2);
+		  		}
 	            tooltipMouseover(d);})             
 		  	.on("mouseout", function(d) {  
 		  		d3.select(this).style("stroke",null);     
@@ -294,7 +291,7 @@
 		  	});
 
 
-		filtered = men.concat(women); 	
+		filtered = men.concat(women); 
 		plotPiChart(men, women, unfiltered);
 		$('.statistics').hide();
 
@@ -412,6 +409,7 @@
 		function plotPiChart(men, women, unfiltered){
 			//Clear current setup
 			d3.selectAll(".axis").remove();
+			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -711,6 +709,7 @@
 		function byPercentageHistogram(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -727,7 +726,7 @@
 			var binCounter = d3.layout.histogram().bins(20).range([d3.min(percentageData), d3.max(percentageData)]);
 			var bins = binCounter(percentageData);
 			var xScale = d3.scale.linear()
-				.domain([0, 105])
+				.domain([0, 100])
 				.range([width/4, 3*width/4]);
 			var yScale = d3.scale.linear()
 				.domain([0,
@@ -737,18 +736,65 @@
 				.range([3*height/4, graphPadding]);
 
 
-			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
+
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
 			svg.append("g")
 				.attr("transform", "translate(0," + (3*height/4) + ")")
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(xAxis);
+
+			//Add text labels
+			
+
+			svg.append("text")
+				.attr("x", width/4-55)
+				.attr("y", 3*height/4+25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "red")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("100% Female Dialogue");
+
+			svg.append("text")
+				.attr("x", 3*width/4-50)
+				.attr("y", 3*height/4+25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("100% Male Dialogue");	
+
+			svg.append("text")
+				.attr("x", width/2-55)
+				.attr("y", 3*height/4+25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("50% Male, 50% Female");	
+
+
 			svg.append("g")
 				.attr("transform", "translate(" + width/4 + ",0)")
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
+
+			svg.append("text")
+				.attr("x", width/4 - 110)
+				.attr("y", height/2 - 25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("Number of Films");	
+
+
 			var yHeights = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 			for (var i = 0; i < filtered.length; i++) 
 			{
@@ -795,6 +841,7 @@
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").remove();
+			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -803,12 +850,36 @@
 			
 			var percentageData = [];
 			var revenueData = [];
+			var menRevenueAverage = 0;
+			var womenRevenueAverage = 0;
+			var menCount = 0;
+			var womenCount = 0;
+			var menRevenueSum = 0;
+
 			for (var i = 0; i < filtered.length; i++) 
 			{
 				//console.log(data._[filtered[i]]);
 				percentageData.push(100*data._[filtered[i]].percentage_male);
-				revenueData.push(data._[filtered[i]].gross)
+				revenueData.push(data._[filtered[i]].gross);
+
+				if(data._[filtered[i]].percentage_male > .5){
+					menRevenueSum = menRevenueSum+data._[filtered[i]].gross;
+					menCount = menCount+1;
+				}
+				else{
+					womenRevenueAverage = womenRevenueAverage+data._[filtered[i]].gross;
+					womenCount++;
+				}
 			};
+
+			menRevenueAverage = menRevenueSum/menCount;
+			womenRevenueAverage = womenRevenueAverage/womenCount;
+
+			console.log(menRevenueAverage);
+			console.log(menCount);
+			console.log(womenRevenueAverage); 
+
+
 			//console.log(revenueData);
 			var xScale = d3.scale.linear()
 				.domain([0, 100])
@@ -817,7 +888,7 @@
 			var yScale = d3.scale.linear()
 				.domain([0, Math.max.apply(null, revenueData)])
 				.range([3*height/4, graphPadding]);
-			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(10);
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			svg.append("g")	
@@ -831,6 +902,68 @@
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
+
+
+			svg.append("text")
+				.attr("x", width/4-55)
+				.attr("y", 3*height/4+25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "red")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("100% Female Dialogue");
+
+			svg.append("text")
+				.attr("x", 3*width/4-50)
+				.attr("y", 3*height/4+25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("100% Male Dialogue");	
+
+			svg.append("text")
+				.attr("x", width/2-55)
+				.attr("y", 3*height/4+25)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("50% Male, 50% Female");
+
+			svg.append("text")
+				.attr("x", width/4 - 115)
+				.attr("y", height/2 - 30)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("Gross Revenue");	
+
+			svg.append("text")
+				.attr("x", width/4 - 120)
+				.attr("y", height/2 - 10)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("(Million Dollars)");	
+
+			//Add average lines
+
+			
+
+			svg.append("text")
+				.attr("x", width/4 - 120)
+				.attr("y", height/2 - 10)
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("(Million Dollars)");	
+
 
 			for (var i = 0; i <filtered.length; i++) {
 				data._[filtered[i]].cy = yScale(data._[filtered[i]].gross);
@@ -878,6 +1011,7 @@
 	function byCharacter(d)
 	{
 		d3.selectAll(".axis").remove();
+		d3.selectAll(".histogramAxis").remove();
 
 		d3.csv("characterlist.csv", function(error, rows) {
 			
@@ -895,12 +1029,6 @@
 						gender: line.gender
 					});
 
-					// if(line.words > maxWords){
-					// 	maxWords = line.words;
-					// };
-					// console.log(line.words + " " + maxWords);
-					// characterArray.push(line.imdb_character_name);
-					// characterWords.push(line.words);
 				}
 			});
 
@@ -916,52 +1044,57 @@
 				.domain(characterArray.map(function(d){
 					return d.name;
 				}))
-				.rangeRoundBands([width/4+50, 3*width/4 - 50], .1);
+				.rangeRoundBands([width/4+70, 3*width/4 - 60], .1);
 			//console.log(Math.max.apply(null, revenueData));
 			var yScale = d3.scale.linear()
 				.domain([0, maxWords])
-				.range([3*height/4-20, graphPadding + 50]);
+				.range([3*height/4-30, graphPadding + 50]);
 
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			svg.append("g")
-				.attr("transform", "translate(0," + (3*height/4 - 20) + ")")
-				.transition().delay(700)
+				.attr("transform", "translate(0," + (3*height/4 - 30) + ")")
+				.transition().delay(800)
 				.attr("class", "xAxis nameAxis")
 				.call(xAxis);
 
 			svg.append("g")
-				.attr("transform", "translate(" + (width/4 + 50) + ",0)")
-				.transition().delay(700)
+				.attr("transform", "translate(" + (width/4 + 70) + ",0)")
+				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
 
-			// svg.selectAll(".xAxis text")
-   //        		.attr("transform", function(d) {
-   //           		return "translate(" + (this.getBBox().height*-2)+ "," + (this.getBBox().height + 10) + ")rotate(-45)";
-   //           	});
-
-             console.log(characterArray.length);
+            console.log(characterArray.length);
 
             for (var i = 0; i <characterArray.length; i++) {
 
-            	svg.append("rect")
-            		.attr("fill", function(){
+            	var rectangle = svg.append("rect");
+
+            	rectangle.attr("fill", function(){
 	               		if(characterArray[i].gender == "m"){
 	               			return "blue";
 	               		}
 	               		return "red";})
-            		.transition().delay(700)
+            		.transition().delay(800)
 	               .attr("x", xScale(characterArray[i].name))
 	               .attr("y", yScale(characterArray[i].words))
 	               .attr("width", xScale.rangeBand())
-	               .attr("height", 3*height/4 - 20 - yScale(characterArray[i].words))
-	               
-	               
-	               ;
-            	
-            };
+	               .attr("height", 3*height/4 - 30 - yScale(characterArray[i].words));
+
+	              rectangle.on("mouseover", function(d){
+	               		console.log(characterArray[d].name);
+	               	});
+
+
+
+				// rectangles.on("mouseover", function(){
+	   //             		console.log(characterArray[i].name);
+	   //             	});
+	           };
+	              
+
+			
 
         
 
