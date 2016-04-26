@@ -263,8 +263,6 @@
 			}
 
 		});
-		console.log(men.length);
-		console.log(women.length);
 		circles = svg.selectAll("circle").data(rows); //.attr("class", "points")
 		circles.enter()
 			.append("circle")
@@ -933,11 +931,11 @@
 				revenueData.push(data._[filtered[i]].gross);
 
 				if(data._[filtered[i]].percentage_male > .5){
-					menRevenueSum = menRevenueSum+data._[filtered[i]].gross;
+					menRevenueSum = menRevenueSum+parseInt(data._[filtered[i]].gross);
 					menCount = menCount+1;
 				}
 				else{
-					womenRevenueAverage = womenRevenueAverage+data._[filtered[i]].gross;
+					womenRevenueAverage = womenRevenueAverage+parseInt(data._[filtered[i]].gross);
 					womenCount++;
 				}
 			};
@@ -946,10 +944,12 @@
 			womenRevenueAverage = womenRevenueAverage/womenCount;
 
 			console.log(menRevenueAverage);
+
+			console.log(menRevenueAverage);
 			console.log(menCount);
 			console.log(womenRevenueAverage); 
 
-
+			console.log(Math.max.apply(null, revenueData));
 			//console.log(revenueData);
 			var xScale = d3.scale.linear()
 				.domain([0, 100])
@@ -1050,6 +1050,48 @@
 				.text("(Million Dollars)");	
 
 			//Add average lines
+			svg.append("line")
+				.transition().delay(1000)
+				.attr("x1", margin.left)
+				.attr("y1", yScale(menRevenueAverage))
+				.attr("x2", width-margin.right+20)
+				.attr("y2", yScale(menRevenueAverage))
+				.attr("stroke-width", 1)
+				.attr("stroke", "blue")
+				.attr("stroke-dasharray","5,5")
+				;
+
+			svg.append("text")
+				.attr("x", width-margin.right+20)
+				.attr("y", yScale(menRevenueAverage))
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.transition().delay(800)
+				.style("fill", "blue")
+				.text("ave. male movie");	
+
+			svg.append("line")
+				.transition().delay(1000)
+				.attr("x1", margin.left)
+				.attr("y1", yScale(womenRevenueAverage))
+				.attr("x2", width-margin.right+20)
+				.attr("y2", yScale(womenRevenueAverage))
+				.attr("stroke-width", 1)
+				.attr("stroke", "red")
+				.attr("stroke-dasharray","5,5")
+				;
+
+			svg.append("text")
+				.attr("x", width-margin.right+20)
+				.attr("y", yScale(womenRevenueAverage))
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.transition().delay(800)
+				.style("fill", "red")
+				.text("ave. female movie");	
+
+            
+            
 
 
 			for (var i = 0; i <filtered.length; i++) {
