@@ -34,6 +34,7 @@ h2 {
 }
 
 /*====================Filters====================*/
+
 .filter-group {
     display: flex;
     margin-bottom: 5px;
@@ -53,7 +54,7 @@ h2 {
 
 .filter {
 	cursor: pointer;
-	padding: 0 14px;
+	padding: 0 8px;
 	margin-left: -3px;
 	background: white;
     text-align: center;
@@ -65,6 +66,10 @@ h2 {
 
     font-weight: 400;
     font-size: 1.2rem;
+}
+
+.filter:hover {
+    background-color: #F5F5F5;
 }
 
 .border{
@@ -81,7 +86,34 @@ h2 {
     border-bottom-right-radius: 5px;
 }
 
+.filter-title {
+    padding-left: 60px;
+    padding-bottom: 1px;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.restore-button {
+    cursor: pointer;
+    padding: 0 10px;
+    margin-left: -3px;
+    background: white;
+    text-align: center;
+    line-height: 25px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: #fff;
+    height: 25px;
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
 /*====================Page Filter Specific====================*/
+
+.page-filter-group {
+    display: flex;
+    margin-bottom: 5px;
+}
 
 .page-filter {
     cursor: pointer;
@@ -100,6 +132,10 @@ h2 {
     font-size: 1.5rem;
 }
 
+.page-filter:hover {
+    background-color: #fff;
+}
+
 .leftmost {
     border-left: none;
 }
@@ -113,23 +149,29 @@ h2 {
 
 .roles-filters {
     position: absolute;
-    top: 170px;
+    top: 200px;
     left: 10px;
 }
 
-.legend {
-    width: 200px;
+.restore-button-group {
     position: absolute;
-    top: 270px;
-    right: 0px;
+    top: 390px;
+    left: 72px;
+
+}
+
+.legend {
+    width: 150px;
+    position: absolute;
+    top: 350px;
+    left: 700px;
 }
 
 .statistics {
-    width: 250px;
+    width: 150px;
     position: absolute;
-    top: 270px;
-    right: 0px;
-
+    top: 350px;
+    left: 700px;
 }
 
 /*====================Legend====================*/
@@ -156,6 +198,7 @@ h2 {
 
 .legend-block {
     display: block;
+    margin-bottom: 74px;
 }
 
 .red {
@@ -168,13 +211,24 @@ h2 {
 
 /*====================Statistics====================*/
 
+.statistics {
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
+.statistics-women {
+    margin-bottom: 30px;
+}
+
 .percent-women {
     color:rgba(255, 0, 0, 0.6);
+    font-size: 1.7rem;
     font-weight: 600;
 }
 
 .percent-men {
     color: rgba(0, 0, 255, 0.6);
+    font-size: 1.7rem;
     font-weight: 600;
 
 }

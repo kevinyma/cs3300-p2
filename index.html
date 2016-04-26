@@ -22,7 +22,7 @@
 		<p class="textbox">We compiled the number of words spoken by male and female characters across IMDB's top films of the past 15 years. We then compared the films by the genders of their creators. Here's what happened.</p>
 		</div>
 
-		<div class="filter-group pages-filter">
+		<div class="page-filter-group pages-filter">
 			<p id="piChart" class="filter page-filter leftmost active">Male vs. Female Dialogue</p>
 			<p id="histogram" class="filter page-filter">Dialogue Breakdown by Percentage</p>
 			<p id="scatterplot" class="filter page-filter ">Impact on Gross Revenue</p>
@@ -30,7 +30,7 @@
 
 
 		<div class="roles-filters">
-			<div class="filter-group">
+			<div class="filter-group filter-title">
 				<p>When a films...</p>
 			</div>
 			<div class="filter-group director-filter">
@@ -53,6 +53,8 @@
 				<p id="w-m" class="border filter">Is Male</p>
 				<p id="w-f" class="border filter back-curve">Is Female</p>
 			</div>
+
+			
 			<div class="filter-group year-filter">
 				<p class="filter-label">Year</p>
 				<button class="dropbtn" id="button" type="button" data-toggle="dropdown">All
@@ -76,9 +78,15 @@
 				    <a class = "filter" id = "2014" href="#fourteen">2014</a>
 				    <a class = "filter" id = "2015" href="#fifteen">2015</a>
 				</ul>
-
 			</div>
 		</div>
+
+		<div class="restore-button-group">
+			<div class="filter-group">
+				<p id="restore" class="border restore-button front-curve back-curve">Restore to all movies</p>
+			</div>
+		</div>
+
 		<div class="legend">
 			<div class="legend-block">
 				<div class="legend-circle red"></div>
@@ -90,8 +98,11 @@
 			</div>
 		</div>
 		<div class="statistics">
-			<p><span class="percent-women"></span> of specified films are female dominated.</p>
-			<p><span class="percent-men"></span> of specified films are male dominated.</p>
+			<div class="statistics-women"><span class="percent-women"></span>
+			<p> of specified films are female dominated.</p></div>
+
+			<div class="statistics-men"><span class="percent-men"></span>
+			<p> of specified films are male dominated.</p></div>
 
 		</div>
 
@@ -101,6 +112,7 @@
 		<div id = "points"/>
 	</div>
 	<script>
+	$(".statistics").hide();
 	d3.selection.prototype.moveToBack = function() {  
         return this.each(function() { 
             var firstChild = this.parentNode.firstChild; 
@@ -116,7 +128,7 @@
 		});
 	};
 
-    function myFunction(){
+    function setYear(){
 		document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
 	}
 
@@ -382,12 +394,12 @@
 			else if (page == "histogram") {
 				byPercentageHistogram(filtered, unfiltered);
 				$('.statistics').fadeOut(200);
-				$('.legend').delay(400).fadeIn(200);
+				$('.legend').fadeOut(200);
 			}
 			else {
 				byRevenueScatterPlot(filtered, unfiltered);
 				$('.statistics').fadeOut(200);
-				$('.legend').delay(400).fadeIn(200);
+				$('.legend').fadeOut(200);
 			}
 		}
 		$('.filter').click( function() {
@@ -401,10 +413,37 @@
 	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
 	    	
 	    	page = $('.pages-filter').find('.active').attr('id');
+
 	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
+	    	document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
+
 	    	//console.log(year);
 	    	applyFilters();
 		});
+
+		$('.restore-button').click(function() {
+
+			page = $('.pages-filter').find('.active').attr('id');
+
+			$('.filter-group').children().removeClass('active');
+			$('#w-all').addClass('active');
+			$('#d-all').addClass('active');
+			$('#p-all').addClass('active');
+
+			$('.dropdown-menu').children().removeClass('active');
+			$('#All').addClass('active');
+			document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
+
+			directorGender = 'all';
+			producerGender = 'all';
+			writerGender = 'all';
+			year = 'All';
+
+			applyFilters();
+
+		});
+
+
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women, unfiltered){
 			//Clear current setup
@@ -708,6 +747,9 @@
 		});
 		function byPercentageHistogram(filtered, unfiltered)
 		{
+			var margin = {top: height/4, right: width/8, bottom: height/4, left: 3*width/8};
+
+
 			d3.selectAll(".axis").remove();
 			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
@@ -727,13 +769,13 @@
 			var bins = binCounter(percentageData);
 			var xScale = d3.scale.linear()
 				.domain([0, 100])
-				.range([width/4, 3*width/4]);
+				.range([0+margin.left, width-margin.right]);
 			var yScale = d3.scale.linear()
 				.domain([0,
 					d3.max(bins, function (bin) {
 						 return bin.y;
 					 }) +5])
-				.range([3*height/4, graphPadding]);
+				.range([height-margin.bottom, graphPadding]);
 
 
 
@@ -741,17 +783,17 @@
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			svg.append("g")
-				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("transform", "translate(0," + (height - margin.bottom) + ")")
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(xAxis);
 
 			//Add text labels
 			
-
 			svg.append("text")
-				.attr("x", width/4-55)
-				.attr("y", 3*height/4+25)
+				.attr("x", margin.left+(width-margin.left-margin.right)*0)
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("fill", "red")
@@ -760,18 +802,20 @@
 				.text("100% Female Dialogue");
 
 			svg.append("text")
-				.attr("x", 3*width/4-50)
-				.attr("y", 3*height/4+25)
+				.attr("x", margin.left+(width-margin.left-margin.right)*(1/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
-				.style("fill", "blue")
+				.style("fill", "red")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("100% Male Dialogue");	
+				.text("75%");
 
 			svg.append("text")
-				.attr("x", width/2-55)
-				.attr("y", 3*height/4+25)
+				.attr("x", margin.left+(width-margin.left-margin.right)*(2/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
@@ -779,15 +823,38 @@
 				.text("50% Male, 50% Female");	
 
 
+			svg.append("text")
+				.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("75%");
+
+			svg.append("text")
+				.attr("x", margin.left+(width-margin.left-margin.right)*1)
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("100% Male Dialogue");	
+
+
 			svg.append("g")
-				.attr("transform", "translate(" + width/4 + ",0)")
+				.attr("transform", "translate(" + margin.left + ",0)")
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
 
 			svg.append("text")
-				.attr("x", width/4 - 110)
-				.attr("y", height/2 - 25)
+				.attr("x", margin.left - 110)
+				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2  - 25)
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
@@ -840,6 +907,9 @@
 		});
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
+			var margin = {top: height/4, right: width/8, bottom: height/4, left: 3*width/8};
+
+
 			d3.selectAll(".axis").remove();
 			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
@@ -883,30 +953,32 @@
 			//console.log(revenueData);
 			var xScale = d3.scale.linear()
 				.domain([0, 100])
-				.range([width/4, 3*width/4]);
+				.range([0+margin.left, width-margin.right]);
 			//console.log(Math.max.apply(null, revenueData));
 			var yScale = d3.scale.linear()
 				.domain([0, Math.max.apply(null, revenueData)])
-				.range([3*height/4, graphPadding]);
+				.range([height-margin.bottom, graphPadding]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			svg.append("g")	
-				.attr("transform", "translate(0," + (3*height/4) + ")")
+				.attr("transform", "translate(0," + (height-margin.bottom) + ")")
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(xAxis);
 
 			svg.append("g")
-				.attr("transform", "translate(" + width/4 + ",0)")
+				.attr("transform", "translate(" + margin.left + ",0)")
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
 
 
+			
 			svg.append("text")
-				.attr("x", width/4-55)
-				.attr("y", 3*height/4+25)
+				.attr("x", margin.left+(width-margin.left-margin.right)*0)
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("fill", "red")
@@ -915,8 +987,42 @@
 				.text("100% Female Dialogue");
 
 			svg.append("text")
-				.attr("x", 3*width/4-50)
-				.attr("y", 3*height/4+25)
+				.attr("x", margin.left+(width-margin.left-margin.right)*(1/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "red")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("75%");
+
+			svg.append("text")
+				.attr("x", margin.left+(width-margin.left-margin.right)*(2/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("50% Male, 50% Female");	
+
+
+			svg.append("text")
+				.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "histogramAxis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.text("75%");
+
+			svg.append("text")
+				.attr("x", margin.left+(width-margin.left-margin.right)*1)
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("fill", "blue")
@@ -924,18 +1030,10 @@
 				.transition().delay(800)
 				.text("100% Male Dialogue");	
 
-			svg.append("text")
-				.attr("x", width/2-55)
-				.attr("y", 3*height/4+25)
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("50% Male, 50% Female");
 
 			svg.append("text")
-				.attr("x", width/4 - 115)
-				.attr("y", height/2 - 30)
+				.attr("x", margin.left - 115)
+				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2 - 30)
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
@@ -943,8 +1041,8 @@
 				.text("Gross Revenue");	
 
 			svg.append("text")
-				.attr("x", width/4 - 120)
-				.attr("y", height/2 - 10)
+				.attr("x", margin.left - 120)
+				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2 - 10)
 				.attr("class", "histogramAxis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
@@ -952,17 +1050,6 @@
 				.text("(Million Dollars)");	
 
 			//Add average lines
-
-			
-
-			svg.append("text")
-				.attr("x", width/4 - 120)
-				.attr("y", height/2 - 10)
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("(Million Dollars)");	
 
 
 			for (var i = 0; i <filtered.length; i++) {
