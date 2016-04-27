@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html>
-
 <head>
  	<title>
 		CS3300 - Project 2
@@ -9,11 +8,9 @@
 	<link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<script src="js/odometer.js"></script>
 	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
 	<link rel='stylesheet' type="text/css" href="css/style.css">
-	<style>
-	slider { width:10px; }
-	</style>
 </head>
 <body>
 	<div class="container">
@@ -88,31 +85,34 @@
 		</div>
 
 		<div class="legend">
-			<div class="legend-block">
+			<div class="legend-box">
 				<div class="legend-circle red"></div>
 				<div class="label">= Women speak more</div>
 			</div>
-			<div class="legend-block">
+			<div class="legend-box">
 				<div class="legend-circle blue"></div>
 				<div class="label">= Men speak more</div>
 			</div>
 		</div>
 		<div class="statistics">
-			<div class="statistics-women"><span class="percent-women"></span>
+			<div class="statistics-women-box"><span class="statistics-women"></span>
 			<p> of specified films are female dominated.</p></div>
-
-			<div class="statistics-men"><span class="percent-men"></span>
+			<div class="statistics-men-box"><span class="statistics-men"></span>
 			<p> of specified films are male dominated.</p></div>
-
 		</div>
-
-
-
+		<div class="revenue">
+			<div class="revenue-box"><span class="revenue-women"></span>
+			<p> average revenue of specified movies where women speak more</p></div>
+			<div class="revenue-box"><span class="revenue-men"></span>
+			<p> average revenue of specified movies where men speak more</p></div>
+		</div>
 		<div id="plot"/>
-		<div id = "points"/>
+		<div id="points"/>
 	</div>
 	<script>
 	$(".statistics").hide();
+	$(".revenue").hide();
+
 	d3.selection.prototype.moveToBack = function() {  
         return this.each(function() { 
             var firstChild = this.parentNode.firstChild; 
@@ -378,26 +378,34 @@
 			filtered = filteredMen.concat(filteredWomen);
 
 			//sets the stats to show on the page
+			if (filtered.length == 0) {
+				var percentMen = '0%';
+				var percentWomen = '0%';
+			} else {
 			var percentMen = Math.round((filteredMen.length/filtered.length)*100) + "%";
 			var percentWomen = Math.round((filteredWomen.length/filtered.length)*100) + "%";
+			}
 			
-			$('.percent-men').hide().html(percentMen).fadeIn(800);
-			$('.percent-women').hide().html(percentWomen).fadeIn(800);
+			$('.statistics-men').hide().html(percentMen).fadeIn(800);
+			$('.statistics-women').hide().html(percentWomen).fadeIn(800);
+
+			
 
 			if(page == "piChart") {
 				plotPiChart(filteredMen,filteredWomen, unfiltered);
-				$('.legend').fadeOut(200);
 				$('.statistics').delay(400).fadeIn(200);
+				$('.revenue').fadeOut(200);
 			}
 			else if (page == "histogram") {
 				byPercentageHistogram(filtered, unfiltered);
 				$('.statistics').fadeOut(200);
-				$('.legend').fadeOut(200);
+				$('.revenue').fadeOut(200);			
 			}
 			else {
 				byRevenueScatterPlot(filtered, unfiltered);
 				$('.statistics').fadeOut(200);
-				$('.legend').fadeOut(200);
+				$('.revenue').delay(400).fadeIn(200);
+
 			}
 		}
 		$('.filter').click( function() {
@@ -1050,47 +1058,52 @@
 				.text("(Million Dollars)");	
 
 			//Add average lines
-			svg.append("line")
-				.transition().delay(1000)
-				.attr("x1", margin.left)
-				.attr("y1", yScale(menRevenueAverage))
-				.attr("x2", width-margin.right+20)
-				.attr("y2", yScale(menRevenueAverage))
-				.attr("stroke-width", 1)
-				.attr("stroke", "blue")
-				.attr("stroke-dasharray","5,5")
-				;
+			// svg.append("line")
+			// 	.transition().delay(1000)
+			// 	.attr("x1", margin.left)
+			// 	.attr("y1", yScale(menRevenueAverage))
+			// 	.attr("x2", width-margin.right+20)
+			// 	.attr("y2", yScale(menRevenueAverage))
+			// 	.attr("stroke-width", 1)
+			// 	.attr("stroke", "blue")
+			// 	.attr("stroke-dasharray","5,5")
+			// 	;
 
-			svg.append("text")
-				.attr("x", width-margin.right+20)
-				.attr("y", yScale(menRevenueAverage))
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.transition().delay(800)
-				.style("fill", "blue")
-				.text("ave. \"male\" movie");	
+			// svg.append("text")
+			// 	.attr("x", width-margin.right+20)
+			// 	.attr("y", yScale(menRevenueAverage))
+			// 	.attr("class", "histogramAxis")
+			// 	.style("font-size", "12px")
+			// 	.transition().delay(800)
+			// 	.style("fill", "blue")
+			// 	.text("ave. \"male\" movie");	
 
-			svg.append("line")
-				.transition().delay(1000)
-				.attr("x1", margin.left)
-				.attr("y1", yScale(womenRevenueAverage))
-				.attr("x2", width-margin.right+20)
-				.attr("y2", yScale(womenRevenueAverage))
-				.attr("stroke-width", 1)
-				.attr("stroke", "red")
-				.attr("stroke-dasharray","5,5")
-				;
+			// svg.append("line")
+			// 	.transition().delay(1000)
+			// 	.attr("x1", margin.left)
+			// 	.attr("y1", yScale(womenRevenueAverage))
+			// 	.attr("x2", width-margin.right+20)
+			// 	.attr("y2", yScale(womenRevenueAverage))
+			// 	.attr("stroke-width", 1)
+			// 	.attr("stroke", "red")
+			// 	.attr("stroke-dasharray","5,5")
+			// 	;
 
-			svg.append("text")
-				.attr("x", width-margin.right+20)
-				.attr("y", yScale(womenRevenueAverage))
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.transition().delay(800)
-				.style("fill", "red")
-				.text("ave. \"female\" movie");	
+			// svg.append("text")
+			// 	.attr("x", width-margin.right+20)
+			// 	.attr("y", yScale(womenRevenueAverage))
+			// 	.attr("class", "histogramAxis")
+			// 	.style("font-size", "12px")
+			// 	.transition().delay(800)
+			// 	.style("fill", "red")
+			// 	.text("ave. \"female\" movie");	
 
-            
+            var womenRevenueAverageString = '$'+ Math.round(womenRevenueAverage) + ' MILLION';
+            var menRevenueAverageString = '$'+ Math.round(menRevenueAverage) + ' MILLION';
+
+
+            $('.revenue-women').hide().html(womenRevenueAverageString).fadeIn(800);
+			$('.revenue-men').hide().html(menRevenueAverageString).fadeIn(800);
             
 
 
