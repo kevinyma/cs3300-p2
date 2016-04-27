@@ -10,7 +10,7 @@
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
-	<link rel='stylesheet' type="text/css" href="style.css">
+	<link rel='stylesheet' type="text/css" href="css/style.css">
 	<style>
 	slider { width:10px; }
 	</style>
@@ -905,7 +905,7 @@
 		});
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
-			var margin = {top: height/4, right: width/8, bottom: height/4, left: 3*width/8};
+			var margin = {top: 30, right: 30, bottom: 30, left: 30};
 
 
 			d3.selectAll(".axis").remove();
@@ -1115,10 +1115,11 @@
 			// 		return newRadius;
 			// 	};
 			// });
+			var radiusScale = d3.scale.sqrt().domain([0,Math.max.apply(null, revenueData)]).range([0,30]);
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
-			.style("opacity", .6)
+			.style("opacity", .4)
 			.style("fill", function(d) {
 		    	var returnColor = "blue";
 		    	if (d.percentage_male > .5) { returnColor = "blue";}
@@ -1128,7 +1129,7 @@
 			{
 				if(d.cx != -10 && d.cx != width+10)
 				{
-					var newRadius =  30*d.gross/Math.max.apply(null, revenueData);
+					var newRadius =  radiusScale(d.gross);
 					//console.log(newRadius);
 					return newRadius;
 				};
