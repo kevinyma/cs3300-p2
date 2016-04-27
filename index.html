@@ -453,8 +453,8 @@
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women, unfiltered){
 			//Clear current setup
-			d3.selectAll(".axis").remove();
-			d3.selectAll(".histogramAxis").remove();
+			//d3.selectAll(".axis").remove();
+			//d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -751,13 +751,46 @@
 			applyFilters();
 			plotPiChart(filteredMen, filteredWomen, unfiltered);
 		});
+
+
+
+		//Set up charts elements to be hidden when changing graphs
+
+		var margin = {top: height/4, right: width/8, bottom: height/4, left: 3*width/8};
+
+		var xAxisStable = svg.append("g");
+
+		xAxisStable.attr("transform", "translate(0," + (height - margin.bottom) + ")")
+			.attr("class", "axis");
+			//.style("stroke-width", .5);
+			//.call(xAxis);
+
+		var yAxisStable = svg.append("g");
+
+		yAxisStable.attr("transform", "translate(" + margin.left + ",0)")
+				.attr("class", "axis");
+
+		var label1 = svg.append("text").text("100% Female Dialogue")
+			.style("opacity", 0);
+		var label2 = svg.append("text").text("75%")
+			.style("opacity", 0);
+		var label3 = svg.append("text").text("50% Male, 50% Female")
+			.style("opacity", 0);
+		var label4 = svg.append("text").text("75%")
+			.style("opacity", 0);
+		var label5 = svg.append("text").text("100% Male Dialogue")
+			.style("opacity", 0);
+
+		var yAxisLabel = svg.append("text").text("Number of Films")
+			.style("opacity", 0);
+
 		function byPercentageHistogram(filtered, unfiltered)
 		{
-			var margin = {top: height/4, right: width/8, bottom: height/4, left: 3*width/8};
+			//hide axis
+			d3.selectAll(".axis").style("opacity", 0);
 
-
-			d3.selectAll(".axis").remove();
-			d3.selectAll(".histogramAxis").remove();
+			//d3.selectAll(".axis").remove();
+			//d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -788,84 +821,88 @@
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
-			svg.append("g")
-				.attr("transform", "translate(0," + (height - margin.bottom) + ")")
+			//svg.append("g")
+
+			xAxisStable.attr("transform", "translate(0," + (height - margin.bottom) + ")")
+				.call(xAxis)
 				.transition().delay(800)
-				.attr("class", "axis")
-				.call(xAxis);
+				.style("opacity", 1)
+				;
 
 			//Add text labels
 			
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*0)
+			//svg.append("text")
+
+				label1.attr("x", margin.left+(width-margin.left-margin.right)*0)
 				.attr("y", height-margin.bottom+25)
 				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("fill", "red")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("100% Female Dialogue");
-
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*(1/4))
-				.attr("y", height-margin.bottom+25)
-				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("fill", "red")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("75%");
-
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*(2/4))
-				.attr("y", height-margin.bottom+25)
-				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("50% Male, 50% Female");	
-
-
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
-				.attr("y", height-margin.bottom+25)
-				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("fill", "blue")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("75%");
-
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*1)
-				.attr("y", height-margin.bottom+25)
-				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("fill", "blue")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("100% Male Dialogue");	
-
-
-			svg.append("g")
-				.attr("transform", "translate(" + margin.left + ",0)")
-				.transition().delay(800)
 				.attr("class", "axis")
-				.call(yAxis);
+				.style("font-size", "12px")
+				.style("fill", "red")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.style("opacity", 1);
 
-			svg.append("text")
-				.attr("x", margin.left - 110)
-				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2  - 25)
-				.attr("class", "histogramAxis")
+			//svg.append("text")
+				label2.attr("x", margin.left+(width-margin.left-margin.right)*(1/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "axis")
+				.style("font-size", "12px")
+				.style("fill", "red")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.style("opacity", 1);
+
+			//svg.append("text")
+				label3.attr("x", margin.left+(width-margin.left-margin.right)*(2/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("Number of Films");	
+				.style("opacity", 1);	
+
+
+			//svg.append("text")
+				label4.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "axis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.style("opacity", 1);
+
+			//svg.append("text")
+				label5.attr("x", margin.left+(width-margin.left-margin.right)*1)
+				.attr("y", height-margin.bottom+25)
+				.attr("text-anchor","middle")
+				.attr("class", "axis")
+				.style("font-size", "12px")
+				.style("fill", "blue")
+				.style("font-weight", "bold")
+				.transition().delay(800)
+				.style("opacity", 1);	
+
+			yAxisStable.attr("transform", "translate(" + margin.left + ",0)")
+				.call(yAxis)
+				.transition().delay(800)
+				.style("opacity", 1)
+				;				
+
+
+			yAxisLabel.attr("x", margin.left - 110)
+				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2  - 25)
+				.attr("class", "axis")
+				.style("font-size", "12px")
+				.style("font-weight", "bold")
+				//.attr("transform", "rotate(90)")
+				
+				.transition().delay(800)
+				.style("opacity", 1);	
 
 
 			var yHeights = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -911,13 +948,17 @@
 		$(".scatterplot").click(function() {
 			byRevenueScatterPlot(filtered, unfiltered);
 		});
+
+
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
-			var margin = {top: 30, right: 30, bottom: 30, left: 30};
+			d3.selectAll(".axis").style("opacity", 0);
+
+			var scatterMargin = {top: 30, right: 80, bottom: 30, left: 80};
 
 
-			d3.selectAll(".axis").remove();
-			d3.selectAll(".histogramAxis").remove();
+			//d3.selectAll(".axis").remove();
+			//d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -961,142 +1002,88 @@
 			//console.log(revenueData);
 			var xScale = d3.scale.linear()
 				.domain([0, 100])
-				.range([0+margin.left, width-margin.right]);
+				.range([0+scatterMargin.left, width-scatterMargin.right]);
 			//console.log(Math.max.apply(null, revenueData));
 			var yScale = d3.scale.linear()
 				.domain([0, Math.max.apply(null, revenueData)])
-				.range([height-margin.bottom, graphPadding]);
+				.range([height-scatterMargin.bottom, graphPadding]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
-			svg.append("g")	
-				.attr("transform", "translate(0," + (height-margin.bottom) + ")")
+			
+			xAxisStable.attr("transform", "translate(0," + (height-scatterMargin.bottom) + ")")
+				.call(xAxis)
 				.transition().delay(800)
-				.attr("class", "axis")
-				.call(xAxis);
+				.style("opacity", 1);
 
-			svg.append("g")
-				.attr("transform", "translate(" + margin.left + ",0)")
+			//Put back in if we want a y axis	
+
+			yAxisStable.attr("transform", "translate(" + -5+ ",0)")
+				.call(yAxis)
 				.transition().delay(800)
-				.attr("class", "axis")
-				.call(yAxis);
+				.style("opacity", 0);
 
+
+			yAxisLabel.attr("x", 0).attr("y", 0).transition().delay(800).style("opacity", 0);	
 
 			
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*0)
-				.attr("y", height-margin.bottom+25)
+
+				label1.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*0)
+				.attr("y", height-scatterMargin.bottom+25)
 				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
+				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("fill", "red")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("100% Female Dialogue");
+				.style("opacity", 1);
 
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*(1/4))
-				.attr("y", height-margin.bottom+25)
+				label2.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*(1/4))
+				.attr("y", height-scatterMargin.bottom+25)
 				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
+				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("fill", "red")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("75%");
+				.style("opacity", 1);
 
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*(2/4))
-				.attr("y", height-margin.bottom+25)
+
+				label3.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*(2/4))
+				.attr("y", height-scatterMargin.bottom+25)
 				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
+				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("50% Male, 50% Female");	
+				.style("opacity", 1);	
 
 
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
-				.attr("y", height-margin.bottom+25)
+
+				label4.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*(3/4))
+				.attr("y", height-scatterMargin.bottom+25)
 				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
+				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("fill", "blue")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("75%");
+				.style("opacity", 1);
 
-			svg.append("text")
-				.attr("x", margin.left+(width-margin.left-margin.right)*1)
-				.attr("y", height-margin.bottom+25)
+
+				label5.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*1)
+				.attr("y", height-scatterMargin.bottom+25)
 				.attr("text-anchor","middle")
-				.attr("class", "histogramAxis")
+				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("fill", "blue")
 				.style("font-weight", "bold")
 				.transition().delay(800)
-				.text("100% Male Dialogue");	
+				.style("opacity", 1);	
 
 
-			svg.append("text")
-				.attr("x", margin.left - 115)
-				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2 - 30)
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("Gross Revenue");	
 
-			svg.append("text")
-				.attr("x", margin.left - 120)
-				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2 - 10)
-				.attr("class", "histogramAxis")
-				.style("font-size", "12px")
-				.style("font-weight", "bold")
-				.transition().delay(800)
-				.text("(Million Dollars)");	
 
-			//Add average lines
-			// svg.append("line")
-			// 	.transition().delay(1000)
-			// 	.attr("x1", margin.left)
-			// 	.attr("y1", yScale(menRevenueAverage))
-			// 	.attr("x2", width-margin.right+20)
-			// 	.attr("y2", yScale(menRevenueAverage))
-			// 	.attr("stroke-width", 1)
-			// 	.attr("stroke", "blue")
-			// 	.attr("stroke-dasharray","5,5")
-			// 	;
-
-			// svg.append("text")
-			// 	.attr("x", width-margin.right+20)
-			// 	.attr("y", yScale(menRevenueAverage))
-			// 	.attr("class", "histogramAxis")
-			// 	.style("font-size", "12px")
-			// 	.transition().delay(800)
-			// 	.style("fill", "blue")
-			// 	.text("ave. \"male\" movie");	
-
-			// svg.append("line")
-			// 	.transition().delay(1000)
-			// 	.attr("x1", margin.left)
-			// 	.attr("y1", yScale(womenRevenueAverage))
-			// 	.attr("x2", width-margin.right+20)
-			// 	.attr("y2", yScale(womenRevenueAverage))
-			// 	.attr("stroke-width", 1)
-			// 	.attr("stroke", "red")
-			// 	.attr("stroke-dasharray","5,5")
-			// 	;
-
-			// svg.append("text")
-			// 	.attr("x", width-margin.right+20)
-			// 	.attr("y", yScale(womenRevenueAverage))
-			// 	.attr("class", "histogramAxis")
-			// 	.style("font-size", "12px")
-			// 	.transition().delay(800)
-			// 	.style("fill", "red")
-			// 	.text("ave. \"female\" movie");	
 
             var womenRevenueAverageString = '$'+ Math.round(womenRevenueAverage) + ' MILLION';
             var menRevenueAverageString = '$'+ Math.round(menRevenueAverage) + ' MILLION';
@@ -1119,15 +1106,7 @@
 					data._[unfiltered[i]].cx = -10;
 				}
 			};
-			// circles.attr("r", function(d)
-			// {
-			// 	if(d.cx != -10 && d.cx != width+10)
-			// 	{
-			// 		var newRadius =  15*d.gross/Math.max.apply(null, revenueData);
-			// 		console.log(newRadius);
-			// 		return newRadius;
-			// 	};
-			// });
+
 			var radiusScale = d3.scale.sqrt().domain([0,Math.max.apply(null, revenueData)]).range([0,30]);
 			circles.transition().duration(1000)
 			.attr("cx", function(d) { return d.cx; })
@@ -1153,8 +1132,8 @@
 
 	function byCharacter(d)
 	{
-		d3.selectAll(".axis").remove();
-		d3.selectAll(".histogramAxis").remove();
+		//d3.selectAll(".axis").remove();
+		//d3.selectAll(".histogramAxis").remove();
 
 		d3.csv("characterlist.csv", function(error, rows) {
 			
