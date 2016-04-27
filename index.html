@@ -262,14 +262,17 @@
 				women.push(line.script_id);
 			}
 
+
 		});
 		circles = svg.selectAll("circle").data(rows); //.attr("class", "points")
 		circles.enter()
 			.append("circle")
+			.attr("class", "icons")
 			.attr("cx", width/2)
 		  	.attr("cy", height/2)
 		  	.attr("r", 6 )
 		  	.style("opacity", .6)
+		  	.style("cursor", "pointer")
 		  	.style("fill", function(d) {
 		    	var returnColor = "blue";
 		    	if (d.percentage_male > .5) { returnColor = "blue";}
@@ -452,6 +455,10 @@
 
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women, unfiltered){
+
+			d3.selectAll(".axis").style("opacity", 0);
+			//d3.selectAll(".icons").style("opacity", 0);
+
 			//Clear current setup
 			//d3.selectAll(".axis").remove();
 			//d3.selectAll(".histogramAxis").remove();
@@ -783,6 +790,7 @@
 
 		var yAxisLabel = svg.append("text").text("Number of Films")
 			.style("opacity", 0);
+			//.attr("transform", "rotate(-90)");
 
 		function byPercentageHistogram(filtered, unfiltered)
 		{
@@ -818,7 +826,7 @@
 
 
 
-			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat("");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			//svg.append("g")
@@ -896,10 +904,10 @@
 
 			yAxisLabel.attr("x", margin.left - 110)
 				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2  - 25)
+				.attr("tranform", "rotate(90)")
 				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
-				//.attr("transform", "rotate(90)")
 				
 				.transition().delay(800)
 				.style("opacity", 1);	
@@ -910,20 +918,14 @@
 			{
 				yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] = yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] + 1;
 			};
-			// rows.forEach(function (line) {
-			// 	yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] + 1;
-			// })
+
 			for (var i = 0; i < filtered.length; i++) 
 			{
 				data._[filtered[i]].cx = xScale(Math.floor(data._[filtered[i]].percentage_male*100/5)*5);
 				data._[filtered[i]].cy = yScale(yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)]);
 				yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] = yHeights[Math.floor(data._[filtered[i]].percentage_male*100/5)] - 1;
 			};
-			// rows.forEach(function (line) {
-			// 	line.cx=xScale(Math.floor(line.percentage_male*100/5)*5);
-			// 	line.cy=yScale(yHeights[Math.floor(line.percentage_male*100/5)]);
-			// 	yHeights[Math.floor(line.percentage_male*100/5)] = yHeights[Math.floor(line.percentage_male*100/5)] - 1;
-			// })	
+
 			for (var i = 0; i < unfiltered.length; i++) {
 				if(data._[unfiltered[i]].cx >= width/2){
 					data._[unfiltered[i]].cx = width+10;
@@ -1007,7 +1009,7 @@
 			var yScale = d3.scale.linear()
 				.domain([0, Math.max.apply(null, revenueData)])
 				.range([height-scatterMargin.bottom, graphPadding]);
-			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(0);
+			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat("");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
 			
@@ -1134,6 +1136,8 @@
 	{
 		//d3.selectAll(".axis").remove();
 		//d3.selectAll(".histogramAxis").remove();
+
+		d3.selectAll(".axis").style("opacity", 0);
 
 		d3.csv("characterlist.csv", function(error, rows) {
 			
