@@ -872,7 +872,6 @@
 				.transition().delay(800)
 				.style("opacity", 1);	
 
-
 			//svg.append("text")
 				label4.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
 				.attr("y", height-margin.bottom+25)
@@ -901,10 +900,10 @@
 				.style("opacity", 1)
 				;				
 
-
-			yAxisLabel.attr("x", margin.left - 110)
-				.attr("y", margin.bottom+(height-margin.bottom-margin.top)/2  - 25)
-				.attr("tranform", "rotate(90)")
+			yAxisLabel
+				// translates to a point (x,y) and rotates about that point
+				.attr("transform","translate(" + (margin.left - 50) + "," + (margin.bottom+(height-margin.bottom-margin.top)/2 -30) + ")rotate(-90)")
+				.attr("text-anchor","middle")
 				.attr("class", "axis")
 				.style("font-size", "12px")
 				.style("font-weight", "bold")
