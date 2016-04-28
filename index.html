@@ -171,6 +171,8 @@
     	.style("opacity", 0);
 	var dataBarScale = d3.scale.linear().domain([0,1]).range([0,50]);
 	var dialogueArray = [0.5,0.6];
+	var popupPoster = popupBox.append("img")
+		.attr("class","poster");
 	var popupName = popupBox.append("p")
 	    .attr("class","nameLabel")
 	    .text(function(){return "";});
@@ -250,7 +252,7 @@
 	function outputUpdate(value) {
 		document.getElementById("enable").innerHTML = value;
 	}
-	d3.csv("movies3.csv", function(error, rows) {
+	d3.csv("movies3urls.csv", function(error, rows) {
 		data = d3.map(rows, function(row) {
 			return row.script_id;
 		});
@@ -709,7 +711,7 @@
 			
 		
 		function tooltipMouseover (d)
-		{
+		{	
 			popupName.text(d.title);
 			popupYear.text(d.year);
 			popupGross.text("$" + d.gross + "M Revenue");
@@ -743,12 +745,20 @@
 		    		if(d.producer == "m") {return "blue";}
 		    		return "red";
 		    	});
+		    popupPoster.attr("src", function(){ 
+		    	return d.poster_url})
+		    	// .attr("width",
+
+
 			popupBox.transition()
 		        .duration(100)
 		        .style("opacity", .95);
 		    popupBox.style("left", (d3.event.pageX + 10) + "px")
 		            .style("top", (d3.event.pageY - 20)+ "px");
 		}
+
+
+
 		$(".histogram").click(function() {
 			applyFilters();
 			byPercentageHistogram(filtered, unfiltered);
