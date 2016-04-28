@@ -966,7 +966,7 @@
 
 
 			//d3.selectAll(".axis").remove();
-			//d3.selectAll(".histogramAxis").remove();
+			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
 			svg.select(".outerCircle").remove();
@@ -1082,116 +1082,118 @@
 				.style("font-weight", "bold")
 				.transition().delay(800)
 				.style("opacity", 1);	
+			
+			if (Math.max.apply(null, revenueData)>0) {
+			
+				svg.append("line")
+					.attr("x1", xScale(0))
+					.attr("x2", xScale(100))
+					.attr("y1", yScale(Math.max.apply(null, revenueData)/4))
+					.attr("y2", yScale(Math.max.apply(null, revenueData)/4))
+					.attr("stroke", "black")
+					.attr("opacity", 0.5)
+					.attr("stroke-width", 2)
+					.attr("stroke-dasharray","10,10")
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(Math.max.apply(null, revenueData)/4)-5)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("$"+Math.max.apply(null, revenueData)/4)
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(Math.max.apply(null, revenueData)/4)+15)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("Million")
+					.attr("class", "histogramAxis");
+	
+				svg.append("line")
+					.attr("x1", xScale(0))
+					.attr("x2", xScale(100))
+					.attr("y1", yScale(Math.max.apply(null, revenueData)/2))
+					.attr("y2", yScale(Math.max.apply(null, revenueData)/2))
+					.attr("stroke", "black")
+					.attr("opacity", 0.5)
+					.attr("stroke-width", 2)
+					.attr("stroke-dasharray","10,10")
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(Math.max.apply(null, revenueData)/2)-5)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("$"+Math.max.apply(null, revenueData)/2)
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(Math.max.apply(null, revenueData)/2)+15)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("Million")
+					.attr("class", "histogramAxis");
+	
+				svg.append("line")
+					.attr("x1", xScale(0))
+					.attr("x2", xScale(100))
+					.attr("y1", yScale(3*Math.max.apply(null, revenueData)/4))
+					.attr("y2", yScale(3*Math.max.apply(null, revenueData)/4))
+					.attr("stroke", "black")
+					.attr("opacity", 0.5)
+					.attr("stroke-width", 2)
+					.attr("stroke-dasharray","10,10")
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)-5)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("$"+3*Math.max.apply(null, revenueData)/4)
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)+15)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("Million")
+					.attr("class", "histogramAxis");
+	
+				svg.append("line")
+					.attr("x1", xScale(0))
+					.attr("x2", xScale(100))
+					.attr("y1", yScale(Math.max.apply(null, revenueData)))
+					.attr("y2", yScale(Math.max.apply(null, revenueData)))
+					.attr("stroke", "black")
+					.attr("opacity", 0.5)
+					.attr("stroke-width", 2)
+					.attr("stroke-dasharray","10,10")
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(Math.max.apply(null, revenueData))-5)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("$"+Math.max.apply(null, revenueData))
+					.attr("class", "histogramAxis");
+	
+				svg.append("text")
+					.attr("x", width-margin.right)
+					.attr("y", yScale(Math.max.apply(null, revenueData))+15)
+					.style("font-size","14px")
+					.style("fill", "black")
+					.text("Million")
+					.attr("class", "histogramAxis");
 
-			svg.append("line")
-				.attr("x1", xScale(0))
-				.attr("x2", xScale(100))
-				.attr("y1", yScale(Math.max.apply(null, revenueData)/4))
-				.attr("y2", yScale(Math.max.apply(null, revenueData)/4))
-				.attr("stroke", "black")
-				.attr("opacity", 0.5)
-				.attr("stroke-width", 2)
-				.attr("stroke-dasharray","10,10")
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(Math.max.apply(null, revenueData)/4)-5)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("$"+Math.max.apply(null, revenueData)/4)
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(Math.max.apply(null, revenueData)/4)+15)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("Million")
-				.attr("class", "histogramAxis");
-
-			svg.append("line")
-				.attr("x1", xScale(0))
-				.attr("x2", xScale(100))
-				.attr("y1", yScale(Math.max.apply(null, revenueData)/2))
-				.attr("y2", yScale(Math.max.apply(null, revenueData)/2))
-				.attr("stroke", "black")
-				.attr("opacity", 0.5)
-				.attr("stroke-width", 2)
-				.attr("stroke-dasharray","10,10")
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(Math.max.apply(null, revenueData)/2)-5)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("$"+Math.max.apply(null, revenueData)/2)
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(Math.max.apply(null, revenueData)/2)+15)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("Million")
-				.attr("class", "histogramAxis");
-
-			svg.append("line")
-				.attr("x1", xScale(0))
-				.attr("x2", xScale(100))
-				.attr("y1", yScale(3*Math.max.apply(null, revenueData)/4))
-				.attr("y2", yScale(3*Math.max.apply(null, revenueData)/4))
-				.attr("stroke", "black")
-				.attr("opacity", 0.5)
-				.attr("stroke-width", 2)
-				.attr("stroke-dasharray","10,10")
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)-5)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("$"+3*Math.max.apply(null, revenueData)/4)
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)+15)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("Million")
-				.attr("class", "histogramAxis");
-
-			svg.append("line")
-				.attr("x1", xScale(0))
-				.attr("x2", xScale(100))
-				.attr("y1", yScale(Math.max.apply(null, revenueData)))
-				.attr("y2", yScale(Math.max.apply(null, revenueData)))
-				.attr("stroke", "black")
-				.attr("opacity", 0.5)
-				.attr("stroke-width", 2)
-				.attr("stroke-dasharray","10,10")
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(Math.max.apply(null, revenueData))-5)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("$"+Math.max.apply(null, revenueData))
-				.attr("class", "histogramAxis");
-
-			svg.append("text")
-				.attr("x", width-margin.right)
-				.attr("y", yScale(Math.max.apply(null, revenueData))+15)
-				.style("font-size","14px")
-				.style("fill", "black")
-				.text("Million")
-				.attr("class", "histogramAxis");
-
-
+			}
 
             var womenRevenueAverageRounded = Math.round(womenRevenueAverage);
             var menRevenueAverageRounded =  Math.round(menRevenueAverage);
