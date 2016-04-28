@@ -16,8 +16,8 @@
 <body>
 	<div class="container">
 		<div class="introduction">
-		<h2>Gender in Film</h2>
-		<p class="textbox">We compiled the number of words spoken by male and female characters across IMDB's top films of the past 15 years. We then compared the films by the genders of their creators. Here's what happened.</p>
+		<h2>Gender Dialogue in Film</h2>
+		<p class="textbox">We compiled the number of words spoken by male and female characters across IMDB's top films of the past 15 years. We then compared the films by the genders of their creators. Here's what we found.</p>
 		</div>
 
 		<div class="page-filter-group pages-filter">
@@ -29,7 +29,7 @@
 
 		<div class="roles-filters">
 			<div class="filter-group filter-title">
-				<h3>When a films...</h3>
+				<h3>When a film's...</h3>
 			</div>
 			<div class="filter-group director-filter">
 				<p class="filter-label">Director</p>
@@ -104,18 +104,18 @@
 		</div>
 
 		<div class="description description-pie">
-			<h3>Breakdown</h3>
-			<p>What does movie dialogue look like from a gender perspective? Blah blah</p>
+			<h3>Male Dialogue Dominates</h3>
+			<p>There is a clear preference within Hollywood for male dominated films. Filtering by the gender of the crew memebers shows how few films have female crews. Changing the years shows this statistic has not improved over the last 15 years. </p>
 		</div>
 
 		<div class="description description-histogram">
 			<h3>Percentages</h3>
-			<p>Blah blah</p>
+			<p>Expanding on the last binary division, this histogram shows that the division of dialogue does not fall on the 50% line. In fact, looking at the entire dataset, we can see most films are made up of 80-90% male dialogue.</p>
 		</div>
 
 		<div class="description description-revenue">
-			<h3>Revenue</h3>
-			<p>Blah blah</p>
+			<h3>Male Dominated Films have Higher Gross Revenue</h3>
+			<p>Hollywood may be skewed towards male dominated films, but this is only to maximize their revenue. This graphs shows that films with heavier male dialoge perform better and have higher revenues.</p>
 		</div>
 		
 		<div id="plot">
@@ -174,16 +174,7 @@
 	var circleColor = 'rgba(0,0,0,0)';
 
 	var circles;
-	// $("slider").slider();	
-	// $("enable").click(function() {
-	// 	if(this.checked) {
-	// 		//With JQuery
-	// 		$("slider").slider("enable");
-	// 	}
-	// 	else{
-	// 		$("slider").slider("disable");
-	// 	}
-	// })
+
 	
 	//Popup variable declarations
 	var popupBox = d3.select("body").append("div")   
@@ -1004,7 +995,7 @@
 		{
 			d3.selectAll(".axis").style("opacity", 0);
 
-			var scatterMargin = {top: 30, right: 80, bottom: 30, left: 80};
+			var scatterMargin = {top: 30, right: 80, bottom: 30, left: 200};
 
 
 			//d3.selectAll(".axis").remove();
