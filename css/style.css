@@ -327,10 +327,12 @@ h2 {
 /* Links inside the dropdown */
 .dropdown-menu a {
     color: black;
-    padding: 12px 10px;
+    padding: 2px 10px;
     text-decoration: none;
     display: block;
-    height: 30px;
+    height: 25px;
+    text-align: center;
+    margin-left: .1px;
 
 }
 
