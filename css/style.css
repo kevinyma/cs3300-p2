@@ -7,6 +7,7 @@ body {
 
 p {
     margin: 0;
+    font-size: 1.2rem;
 }
 
 .container {
@@ -21,7 +22,7 @@ p {
 
 h2 {
     font-size: 3rem;
-    font-weight: 400;
+    font-weight: 500;
     font-family: "Merriweather";
 }
 
@@ -149,21 +150,21 @@ h2 {
 
 .roles-filters {
     position: absolute;
-    top: 200px;
+    top: 350px;
     left: 10px;
 }
 
 .restore-button-group {
     position: absolute;
-    top: 390px;
+    top: 500px;
     left: 72px;
 }
 
 .legend {
-    width: 150px;
+    width: 200px;
     position: absolute;
-    top: 450px;
-    left: 20px;
+    top: 600px;
+    left: 10px;
 }
 
 .statistics {
@@ -179,6 +180,31 @@ h2 {
     left: 330px;
 }
 
+.description {
+    width: 220px;
+    position: absolute;
+    top: 200px;
+    left: 10px;
+}
+
+
+/*====================Descriptions====================*/
+
+h3 {
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin: 0;
+    padding: 0;
+    font-family: 'Merriweather';
+}
+
+.description-histogram {
+    display: none;
+}
+
+.description-revenue {
+    display: none;
+}
 
 /*====================Legend====================*/
 
@@ -204,6 +230,11 @@ h2 {
 
 .legend-box {
     display: block;
+
+}
+
+.legend-box-women {
+    margin-top: 7px;
 }
 
 .red {
@@ -364,7 +395,7 @@ h2 {
         pointer-events: none;}
 
     .poster {
-        width: 100px;
+        height: 150px;
         margin-top: 7px;
         margin-bottom: 7px;
 
