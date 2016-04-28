@@ -8,7 +8,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script src="js/odometer.js"></script>
+	<script src="js/countUp.min.js"></script>
 	<link rel='stylesheet' type="text/css" href="css/bootstrap.css">
 	<link rel='stylesheet' type="text/css" href="css/style.css">
 </head>
@@ -16,7 +16,7 @@
 	<div class="container">
 		<div class="introduction">
 		<h2>Gender in Film</h2>
-		<p class="textbox">We compiled the number of words spoken by male and female characters across IMDB's top films of the past 15 years. We then compared the films by the genders of their creators. Here's what happened.</p>
+		<p class="textbox">We compiled the number of words spoken by male and female characters across IMDB's top films of the past 15 years. We then compared the films by the genders of their creators. Here's what happened.<span class="testbox" id="testbox">0</span></p>
 		</div>
 
 		<div class="page-filter-group pages-filter">
@@ -101,9 +101,9 @@
 			<p> of specified films are male dominated.</p></div>
 		</div>
 		<div class="revenue">
-			<div class="revenue-box"><span class="revenue-women"></span>
+			<div class="revenue-box"><span class="revenue-women">$<span class="revenue-women-number"></span> MILLION</span>
 			<p> average revenue of specified movies where women speak more</p></div>
-			<div class="revenue-box"><span class="revenue-men"></span>
+			<div class="revenue-box"><span class="revenue-men">$<span class="revenue-men-number"></span> MILLION</span>
 			<p> average revenue of specified movies where men speak more</p></div>
 		</div>
 		<div id="plot"/>
@@ -749,7 +749,6 @@
 		    popupBox.style("left", (d3.event.pageX + 10) + "px")
 		            .style("top", (d3.event.pageY - 20)+ "px");
 		}
-		
 		$(".histogram").click(function() {
 			applyFilters();
 			byPercentageHistogram(filtered, unfiltered);
@@ -791,6 +790,14 @@
 		var yAxisLabel = svg.append("text").text("Number of Films")
 			.style("opacity", 0);
 			//.attr("transform", "rotate(-90)");
+
+
+
+
+
+			// var demo = new CountUp(".statistics-women", 0, 
+			// 	8000);
+			// demo.start();
 
 		function byPercentageHistogram(filtered, unfiltered)
 		{
@@ -950,7 +957,7 @@
 			byRevenueScatterPlot(filtered, unfiltered);
 		});
 
-
+		var oldWomen;
 		function byRevenueScatterPlot(filtered, unfiltered)
 		{
 			d3.selectAll(".axis").style("opacity", 0);
@@ -992,12 +999,6 @@
 
 			menRevenueAverage = menRevenueSum/menCount;
 			womenRevenueAverage = womenRevenueAverage/womenCount;
-
-			console.log(menRevenueAverage);
-
-			console.log(menRevenueAverage);
-			console.log(menCount);
-			console.log(womenRevenueAverage); 
 
 			console.log(Math.max.apply(null, revenueData));
 			//console.log(revenueData);
@@ -1086,13 +1087,26 @@
 
 
 
-            var womenRevenueAverageString = '$'+ Math.round(womenRevenueAverage) + ' MILLION';
-            var menRevenueAverageString = '$'+ Math.round(menRevenueAverage) + ' MILLION';
+            var womenRevenueAverageRounded = Math.round(womenRevenueAverage);
+            var menRevenueAverageRounded =  Math.round(menRevenueAverage);
 
+            //////cool scrolling number animations, might be a bit flashy
+			// var options = {
+			// 	useEasing: false,
+			// 	useGrouping: true, 
+			// 	separator: '',
+			// 	decimal: '',
+			// 	prefix: '',
+			// 	suffix: ''
+			// };
+			// 	var animationWomen = new CountUp($(".revenue-women-number")[0], 0, 0, 0, 1, options);
+			// 	var animationMen = new CountUp($(".revenue-men-number")[0], 0, 0, 0, 1, options)
 
-            $('.revenue-women').hide().html(womenRevenueAverageString).fadeIn(800);
-			$('.revenue-men').hide().html(menRevenueAverageString).fadeIn(800);
-            
+			 animationWomen.update(womenRevenueAverage);
+			 animationMen.update(menRevenueAverage);
+
+            $('.revenue-women-number').hide().html(womenRevenueAverageRounded).fadeIn(800);
+			$('.revenue-men-number').hide().html(menRevenueAverageRounded).fadeIn(800);
 
 
 			for (var i = 0; i <filtered.length; i++) {
@@ -1207,9 +1221,9 @@
 	               .attr("width", xScale.rangeBand())
 	               .attr("height", 3*height/4 - 30 - yScale(characterArray[i].words));
 
-	              rectangle.on("mouseover", function(d){
-	               		console.log(characterArray[d].name);
-	               	});
+	            rectangle.on("mouseover", function(d){
+	               	console.log(characterArray[d].name);
+	            });
 
 
 
@@ -1217,17 +1231,10 @@
 	   //             		console.log(characterArray[i].name);
 	   //             	});
 	           };
-	              
-
-			
-
-        
-
+	             
 		});
-
 		
 	}
-
 
 	</script>
 
