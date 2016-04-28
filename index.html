@@ -1095,7 +1095,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(Math.max.apply(null, revenueData)/4)-5)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1103,7 +1103,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(Math.max.apply(null, revenueData)/4)+15)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1122,7 +1122,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(Math.max.apply(null, revenueData)/2)-5)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1130,7 +1130,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(Math.max.apply(null, revenueData)/2)+15)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1149,7 +1149,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)-5)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1157,7 +1157,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)+15)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1176,7 +1176,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(Math.max.apply(null, revenueData))-5)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1184,7 +1184,7 @@
 				.attr("class", "histogramAxis");
 
 			svg.append("text")
-				.attr("x", width-2*margin.right)
+				.attr("x", width-margin.right)
 				.attr("y", yScale(Math.max.apply(null, revenueData))+15)
 				.style("font-size","14px")
 				.style("fill", "black")
@@ -1208,8 +1208,8 @@
 			// 	var animationWomen = new CountUp($(".revenue-women-number")[0], 0, 0, 0, 1, options);
 			// 	var animationMen = new CountUp($(".revenue-men-number")[0], 0, 0, 0, 1, options)
 
-			 animationWomen.update(womenRevenueAverage);
-			 animationMen.update(menRevenueAverage);
+			// animationWomen.update(womenRevenueAverage);
+			// animationMen.update(menRevenueAverage);
 
             $('.revenue-women-number').hide().html(womenRevenueAverageRounded).fadeIn(800);
 			$('.revenue-men-number').hide().html(menRevenueAverageRounded).fadeIn(800);
