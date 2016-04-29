@@ -207,10 +207,19 @@ h2 {
 .statistics {
     width: 265px;
     height: 400px;
-    background-color: white;
     position: absolute;
     top: 250px;
     left: 700px;
+}
+
+.cover {
+    position: absolute;
+    background-color: white;
+    height: 400px;
+    width: 50px;
+    top: 0;
+    right: 0;
+
 }
 
 .revenue {
