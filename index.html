@@ -52,7 +52,6 @@
 				<p id="w-f" class="border filter back-curve">Is Female</p>
 			</div>
 
-			
 			<div class="filter-group year-filter">
 				<p class="filter-label">Year</p>
 				<button class="dropbtn" id="button" type="button" data-toggle="dropdown">All
@@ -105,12 +104,12 @@
 
 		<div class="description description-pie">
 			<h3>Male Dialogue Dominates</h3>
-			<p class="smalltext">There is a clear preference within Hollywood for male dominated films. Filtering by the gender of the crew memebers shows how few films have female crews. Changing the years shows this statistic has not improved over the last 15 years. </p>
+			<p class="smalltext">There is a clear preference within Hollywood for male-dialogue dominated films. Filtering by the gender of the key creative roles shows how few films have female crews. Changing the years shows this statistic has not improved over the last 15 years. </p>
 		</div>
 
 		<div class="description description-histogram">
 			<h3>Percentages</h3>
-			<p>Expanding on the last binary division, this histogram shows that the division of dialogue does not fall on the 50% line. In fact, looking at the entire dataset, we can see most films are made up of 80-90% male dialogue.</p>
+			<p>Expanding on the last binary division, this histogram shows that the distribution of dialogue is far from symmetric: in fact, it is centered around films with 80-90% male dialogue.</p>
 		</div>
 
 		<div class="description description-revenue">
@@ -176,8 +175,11 @@
 
 	
 	//Popup variable declarations
-	var popupBox = d3.select("body").append("div")   
+	var popupBox = d3.select("body")
+		.append("div")   
     	.attr("class", "tooltip")
+    	.style("left",0)
+    	.style("top",0)
     	.style("opacity", 0);
 	var dataBarScale = d3.scale.linear().domain([0,1]).range([0,50]);
 	var dialogueArray = [0.5,0.6];
@@ -241,12 +243,7 @@
 	    .enter()
 	    .append("div")
 	    .attr("class","dataRow");
-	var popupWriterLabel = popupCrew.append("p")
-        .attr("class","crewLabel")
-        .text("Writer: ");
-	var popupWriter = popupCrew.append("p")
-        .attr("class","dataCrewGender")
-        .text("");
+
 	var popupDirectorLabel = popupCrew.append("p")
         .attr("class","crewLabel")
         .text("Director: ");
@@ -257,6 +254,12 @@
         .attr("class","crewLabel")
         .text("Producer: ");
 	var popupProducer = popupCrew.append("p")
+        .attr("class","dataCrewGender")
+        .text("");
+    var popupWriterLabel = popupCrew.append("p")
+        .attr("class","crewLabel")
+        .text("Writer: ");
+	var popupWriter = popupCrew.append("p")
         .attr("class","dataCrewGender")
         .text("");
 	function outputUpdate(value) {
@@ -413,6 +416,7 @@
 				$('.description-revenue').fadeOut(200);	
 				$('.statistics').delay(400).fadeIn(200);
 				$('.description-pie').delay(400).fadeIn(200);
+				$('.legend').delay(400).fadeIn(200);
 
 			}
 			else if (page == "histogram") {
@@ -422,7 +426,7 @@
 				$('.description-pie').fadeOut(200);	
 				$('.description-revenue').fadeOut(200);	
 				$('.description-histogram').delay(400).fadeIn(200);
-		
+				$('.legend').delay(400).fadeIn(200);
 			}
 			else {
 				byRevenueScatterPlot(filtered, unfiltered);
@@ -431,27 +435,30 @@
 				$('.description-histogram').fadeOut(200);	
 				$('.revenue').delay(400).fadeIn(200);
 				$('.description-revenue').delay(400).fadeIn(200);
-
-
+				$('.legend').fadeOut(200);	
 			}
 		}
+
+
 		$('.filter').click( function() {
-			//add style to active button, remove from
-			$(this).siblings().removeClass('active');
-	    	$(this).addClass('active');
-	    	//assign active buttons to variables
-	  
-	    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
-	    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
-	    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
-	    	
-	    	page = $('.pages-filter').find('.active').attr('id');
+			if (!$(this).hasClass('active')){
+				//add style to active button, remove from
+				$(this).siblings().removeClass('active');
+		    	$(this).addClass('active');
+		    	//assign active buttons to variables
+		  
+		    	directorGender = $('.director-filter').find('.active').attr('id').substring(2);
+		    	producerGender = $('.producer-filter').find('.active').attr('id').substring(2);
+		    	writerGender = $('.writer-filter').find('.active').attr('id').substring(2);
+		    	
+		    	page = $('.pages-filter').find('.active').attr('id');
 
-	    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
-	    	document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
+		    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
+		    	document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
 
-	    	//console.log(year);
-	    	applyFilters();
+		    	//console.log(year);
+		    	applyFilters();
+		    }
 		});
 
 		$('.restore-button').click(function() {
@@ -481,10 +488,6 @@
 		function plotPiChart(men, women, unfiltered){
 
 			d3.selectAll(".axis").style("opacity", 0);
-			//d3.selectAll(".icons").style("opacity", 0);
-
-			//Clear current setup
-			//d3.selectAll(".axis").remove();
 			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
@@ -524,8 +527,7 @@
 			var wx = r+padding;
 			var wy = r+padding;
 			var wcount = women.length;
-			// var xFilteredOldLocations = []; //holds all original x locations of filtered points
-			// var yFilteredOldLocations = []; //holds all original y locations of filtered points
+
 			//plots all points where women have more speaking parts
 			while (wcount>0){
 				var d = r+padding;
@@ -542,21 +544,16 @@
 						if (wfill){
 							if(women[wcount]>0){
 							wcount-=1;
-							// xFilteredOldLocations.push(data._[women[wcount]].cx);
-							// yFilteredOldLocations.push(data._[women[wcount]].cy);
 							data._[women[wcount]].cx = (width)/2-wx;
 							data._[women[wcount]].cy = height/2 -wy; };
-							// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
 							
 						}
 						wcount-=1;
 						if(women[wcount]>0){
-							// xFilteredOldLocations.push(data._[women[wcount]].cx);
-							// yFilteredOldLocations.push(data._[women[wcount]].cy);
+
 							data._[women[wcount]].cx = (width)/2+wx;
 							data._[women[wcount]].cy = height/2 -wy;
 						}
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
 						
 						wx+=(r+padding)*2;
 					}
@@ -570,11 +567,9 @@
 						}
 						wcount-=1;
 						if(women[wcount]>0){
-							// xFilteredOldLocations.push(data._[women[wcount]].cx);
-							// yFilteredOldLocations.push(data._[women[wcount]].cy);
+						
 							data._[women[wcount]].cx = (width)/2-wx2;
 							data._[women[wcount]].cy = height/2 +wy;};
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx2).attr("cy",height/2 +wy).style("fill", "blue");
 						
 						wx2+=(r+padding)*2;
 					}
@@ -586,18 +581,13 @@
 						}
 						wcount-=2;
 						if(women[wcount]>0){
-							// xFilteredOldLocations.push(data._[women[wcount]].cx);
-							// yFilteredOldLocations.push(data._[women[wcount]].cy);
-							data._[women[wcount]].cx = (width)/2+wx;
+						
 							data._[women[wcount]].cy = height/2 -wy;};
 						if(women[wcount+1]>0){
-							// xFilteredOldLocations.push(data._[women[wcount+1]].cx);
-							// yFilteredOldLocations.push(data._[women[wcount+1]].cy);
 							data._[women[wcount+1]].cx = (width)/2-wx;
 							data._[women[wcount+1]].cy = height/2 -wy;};
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2+wx).attr("cy",height/2 -wy).style("fill", "blue");
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2-wx).attr("cy",height/2 -wy).style("fill", "blue");
 						
+					
 						wx+=(r+padding)*2;
 					}
 					wy+=(r+padding)*2;
@@ -623,19 +613,13 @@
 						}
 						if (mfill){
 							mcount-=1;
-							// xFilteredOldLocations.push(data._[men[mcount]].cx);
-							// yFilteredOldLocations.push(data._[men[mcount]].cy);
 							data._[men[mcount]].cx = (width)/2-mx;
-							data._[men[mcount]].cy = height/2 +my;
-							// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
-							
+							data._[men[mcount]].cy = height/2 +my;							
 						}
 						mcount-=1;
-						// xFilteredOldLocations.push(data._[men[mcount]].cx);
-						// yFilteredOldLocations.push(data._[men[mcount]].cy);
+			
 						data._[men[mcount]].cx = (width)/2+mx;
 						data._[men[mcount]].cy = height/2 +my;
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
 						
 						mx+=(r+padding)*2;
 					}
@@ -648,11 +632,9 @@
 							break;
 						}
 						mcount-=1;
-						// xFilteredOldLocations.push(data._[men[mcount]].cx);
-						// yFilteredOldLocations.push(data._[men[mcount]].cy);
+				
 						data._[men[mcount]].cx = (width)/2-mx2;
 						data._[men[mcount]].cy = height/2 -my;
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx2).attr("cy",height/2 -my).style("fill", "red");
 						
 						mx2+=(r+padding)*2;
 					}
@@ -664,17 +646,13 @@
 						}
 						mcount-=2;
 						if(men[mcount]>=0){
-						// xFilteredOldLocations.push(data._[men[mcount]].cx);
-						// yFilteredOldLocations.push(data._[men[mcount]].cy);
+			
 						data._[men[mcount]].cx = (width)/2+mx;
 						data._[men[mcount]].cy = height/2 +my;};
-						// xFilteredOldLocations.push(data._[men[mcount+1]].cx);
-						// yFilteredOldLocations.push(data._[men[mcount+1]].cy);
+	
 						if(men[mcount+1]>=0){
 						data._[men[mcount+1]].cx = (width)/2-mx;
 						data._[men[mcount+1]].cy = height/2 +my;};
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2+mx).attr("cy",height/2 +my).style("fill", "red");
-						// svg.append("circle").attr("r",r).attr("cx",(width)/2-mx).attr("cy",height/2 +my).style("fill", "red");
 						
 						mx+=(r+padding)*2;
 					}
@@ -689,30 +667,7 @@
 				else{ data._[unfiltered[i]].cx = -10;
 				}
 			};
-			//x and y locations of previous icons that are now moved inside the new radius
-			// var xOpenSpaces = [];
-			// var yOpenSpaces = [];
-			// var counter = 0;
-			// for (var i = 0; i <xFilteredOldLocations.length; i++) 
-			// {
-			// 	var distance = Math.sqrt(((xFilteredOldLocations[i]-width/2)*(xFilteredOldLocations[i]-width/2)) + ((yFilteredOldLocations[i] - height/2)*(yFilteredOldLocations[i] - height/2)));
-			// 	if (distance > Radius) {
-			// 		xOpenSpaces.push(xFilteredOldLocations[i]);
-			// 		yOpenSpaces.push(yFilteredOldLocations[i]);
-			// 	};
-			// };
-			// for (var i = 0; i < unfiltered.length; i++) 
-			// {
-			// 	var xUnfiltered = data._[unfiltered[i]].cx;
-			// 	var yUnfiltered = data._[unfiltered[i]].cy;
-			// 	var unfilteredDistance = Math.sqrt(((xUnfiltered-width/2)*(xUnfiltered-width/2)) + ((yUnfiltered-height/2)*(yUnfiltered-height/2)));
-			// 	if (unfilteredDistance < Radius) {
-			// 		data._[unfiltered[i]].cx = xOpenSpaces[counter];
-			// 		data._[unfiltered[i]].cy = yOpenSpaces[counter];
-			// 		counter++;
-			// 	};
-			// };
-			//console.log(xOpenSpaces);
+
 			circles.transition().duration(1250)
 			.attr("cx", function(d) { return d.cx; })
 			.attr("cy", function(d) { return d.cy; })
@@ -722,13 +677,7 @@
 		    	var returnColor = "blue";
 		    	if (d.percentage_male > .5) { returnColor = "blue";}
 		    	else  { returnColor = "red"; }
-		    	return returnColor;});
-			// circles.style("fill", function(d){
-			// 	if(Math.sqrt((d.cx-width/2)*(d.cx-width/2) + (d.cy-height/2)*(d.cy-height/2)) > Radius)
-			// 	{
-			// 		return "rgba(0,0,0,.125)";
-			// 	}
-			// });
+		    	return returnColor;});	
 		}
 			
 		
@@ -770,13 +719,12 @@
 		    popupPoster.attr("src", function(){ 
 		    	return d.poster_url
 		    })
-		    	// .attr("width",
 
 			popupBox.transition()
 		        .duration(100)
 		        .style("opacity", .95);
-		    popupBox.style("left", (d3.event.pageX + 10) + "px")
-		            .style("top", (d3.event.pageY - 20)+ "px");
+		    popupBox.style("left", (d3.event.pageX +10) + "px")
+		            .style("top", (d3.event.pageY - 250)+ "px");
 		}
 
 
@@ -797,8 +745,7 @@
 
 		xAxisStable.attr("transform", "translate(0," + (height - margin.bottom) + ")")
 			.attr("class", "axis");
-			//.style("stroke-width", .5);
-			//.call(xAxis);
+
 
 		var yAxisStable = svg.append("g");
 
@@ -807,6 +754,7 @@
 
 		var label1 = svg.append("text").text("100% Female Dialogue")
 			.style("opacity", 0);
+
 		var label2 = svg.append("text").text("75%")
 			.style("opacity", 0);
 		var label3 = svg.append("text").text("50% Male, 50% Female")
@@ -818,22 +766,12 @@
 
 		var yAxisLabel = svg.append("text").text("Number of Films")
 			.style("opacity", 0);
-			//.attr("transform", "rotate(-90)");
-
-
-
-
-
-			// var demo = new CountUp(".statistics-women", 0, 
-			// 	8000);
-			// demo.start();
 
 		function byPercentageHistogram(filtered, unfiltered)
 		{
 			//hide axis
 			d3.selectAll(".axis").style("opacity", 0);
 
-			//d3.selectAll(".axis").remove();
 			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
@@ -844,10 +782,8 @@
 			var percentageData = [];
 			for (var i = 0; i < filtered.length; i++) 
 			{
-				//console.log(data._[filtered[i]]);
 				percentageData.push(100*data._[filtered[i]].percentage_male);
 			};
-			//console.log(percentageData);
 			var binCounter = d3.layout.histogram().bins(20).range([d3.min(percentageData), d3.max(percentageData)]);
 			var bins = binCounter(percentageData);
 			var xScale = d3.scale.linear()
@@ -865,17 +801,11 @@
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat("");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
-			//svg.append("g")
-
 			xAxisStable.attr("transform", "translate(0," + (height - margin.bottom) + ")")
 				.call(xAxis)
 				.transition().delay(800)
 				.style("opacity", 1)
 				;
-
-			//Add text labels
-			
-			//svg.append("text")
 
 				label1.attr("x", margin.left+(width-margin.left-margin.right)*0)
 				.attr("y", height-margin.bottom+25)
@@ -887,7 +817,6 @@
 				.transition().delay(800)
 				.style("opacity", 1);
 
-			//svg.append("text")
 				label2.attr("x", margin.left+(width-margin.left-margin.right)*(1/4))
 				.attr("y", height-margin.bottom+25)
 				.attr("text-anchor","middle")
@@ -898,7 +827,6 @@
 				.transition().delay(800)
 				.style("opacity", 1);
 
-			//svg.append("text")
 				label3.attr("x", margin.left+(width-margin.left-margin.right)*(2/4))
 				.attr("y", height-margin.bottom+25)
 				.attr("text-anchor","middle")
@@ -908,7 +836,6 @@
 				.transition().delay(800)
 				.style("opacity", 1);	
 
-			//svg.append("text")
 				label4.attr("x", margin.left+(width-margin.left-margin.right)*(3/4))
 				.attr("y", height-margin.bottom+25)
 				.attr("text-anchor","middle")
@@ -919,7 +846,6 @@
 				.transition().delay(800)
 				.style("opacity", 1);
 
-			//svg.append("text")
 				label5.attr("x", margin.left+(width-margin.left-margin.right)*1)
 				.attr("y", height-margin.bottom+25)
 				.attr("text-anchor","middle")
@@ -991,10 +917,8 @@
 		{
 			d3.selectAll(".axis").style("opacity", 0);
 
-			var scatterMargin = {top: 200, right: 60, bottom: 30, left: 30};
+			var scatterMargin = {top: 180, right: 60, bottom: 60, left: 30};
 
-
-			//d3.selectAll(".axis").remove();
 			d3.selectAll(".histogramAxis").remove();
 			d3.selectAll(".nameAxis").remove();
 			d3.selectAll("rect").remove();
@@ -1111,6 +1035,7 @@
 					.attr("x2", xScale(100))
 					.attr("y1", yScale(Math.max.apply(null, revenueData)/4))
 					.attr("y2", yScale(Math.max.apply(null, revenueData)/4))
+					.transition().delay(800)
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
 					.attr("stroke-width", 1)
@@ -1118,17 +1043,20 @@
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
-					.attr("x", width-margin.right)
+					.attr("x", width-margin.right+70)
 					.attr("y", yScale(Math.max.apply(null, revenueData)/4)-5)
-					.style("font-size","14px")
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
-					.text("$"+Math.max.apply(null, revenueData)/4)
+					.text("$"+Math.round(Math.max.apply(null, revenueData)/4)+"M")
+					
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
-					.attr("x", width-margin.right)
-					.attr("y", yScale(Math.max.apply(null, revenueData)/4)+15)
-					.style("font-size","14px")
+					.attr("x", width-margin.right+70)
+					.attr("y", yScale(Math.max.apply(null, revenueData)/4)+10)
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
 					.text("Million")
 					.attr("class", "histogramAxis");
@@ -1138,24 +1066,29 @@
 					.attr("x2", xScale(100))
 					.attr("y1", yScale(Math.max.apply(null, revenueData)/2))
 					.attr("y2", yScale(Math.max.apply(null, revenueData)/2))
+					.transition().delay(800)
 					.attr("stroke", "black")
-					.attr("opacity", 0.5)
 					.attr("stroke-width", 1)
 					.attr("stroke-dasharray","4,4")
-					.attr("class", "histogramAxis");
-	
+					.attr("class", "histogramAxis")
+					.attr("opacity", 0.5);
+
 				svg.append("text")
-					.attr("x", width-margin.right)
+
+					.attr("x", width-margin.right+70)
 					.attr("y", yScale(Math.max.apply(null, revenueData)/2)-5)
-					.style("font-size","14px")
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
-					.text("$"+Math.max.apply(null, revenueData)/2)
+					.text("$"+Math.round(Math.max.apply(null, revenueData)/2))
 					.attr("class", "histogramAxis");
-	
+
 				svg.append("text")
-					.attr("x", width-margin.right)
-					.attr("y", yScale(Math.max.apply(null, revenueData)/2)+15)
-					.style("font-size","14px")
+
+					.attr("x", width-margin.right+70)
+					.attr("y", yScale(Math.max.apply(null, revenueData)/2)+10)
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
 					.text("Million")
 					.attr("class", "histogramAxis");
@@ -1165,6 +1098,7 @@
 					.attr("x2", xScale(100))
 					.attr("y1", yScale(3*Math.max.apply(null, revenueData)/4))
 					.attr("y2", yScale(3*Math.max.apply(null, revenueData)/4))
+					.transition().delay(800)
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
 					.attr("stroke-width", 1)
@@ -1172,17 +1106,19 @@
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
-					.attr("x", width-margin.right)
+					.attr("x", width-margin.right+70)
 					.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)-5)
-					.style("font-size","14px")
-					.style("fill", "black")
-					.text("$"+3*Math.max.apply(null, revenueData)/4)
+					.style("font-size","1.2rem")
+					.transition().delay(800)
+					.style("fill", "black")					
+					.text("$"+Math.round(3*Math.max.apply(null, revenueData)/4))
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
-					.attr("x", width-margin.right)
-					.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)+15)
-					.style("font-size","14px")
+					.attr("x", width-margin.right+70)
+					.attr("y", yScale(3*Math.max.apply(null, revenueData)/4)+10)
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
 					.text("Million")
 					.attr("class", "histogramAxis");
@@ -1192,6 +1128,7 @@
 					.attr("x2", xScale(100))
 					.attr("y1", yScale(Math.max.apply(null, revenueData)))
 					.attr("y2", yScale(Math.max.apply(null, revenueData)))
+					.transition().delay(800)
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
 					.attr("stroke-width", 1)
@@ -1199,17 +1136,19 @@
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
-					.attr("x", width-margin.right)
+					.attr("x", width-margin.right+70)
 					.attr("y", yScale(Math.max.apply(null, revenueData))-5)
-					.style("font-size","14px")
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
 					.text("$"+Math.max.apply(null, revenueData))
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
-					.attr("x", width-margin.right)
-					.attr("y", yScale(Math.max.apply(null, revenueData))+15)
-					.style("font-size","14px")
+					.attr("x", width-margin.right+70)
+					.attr("y", yScale(Math.max.apply(null, revenueData))+10)
+					.style("font-size","1.2rem")
+					.transition().delay(800)
 					.style("fill", "black")
 					.text("Million")
 					.attr("class", "histogramAxis");
@@ -1276,7 +1215,6 @@
 
 	function byCharacter(d)
 	{
-		//d3.selectAll(".axis").remove();
 		d3.selectAll(".histogramAxis").remove();
 
 		d3.selectAll(".axis").style("opacity", 0);
@@ -1284,8 +1222,6 @@
 		d3.csv("characterlist.csv", function(error, rows) {
 			
 			var characterArray = [];
-			// var characterArray = [];
-			// var characterWords = [];
 
 			var maxWords = 0;
 
@@ -1306,14 +1242,11 @@
 
 			maxWords = characterArray[characterArray.length-1].words;
 
-			//console.log(maxWords);
-
 			var xScale = d3.scale.ordinal()
 				.domain(characterArray.map(function(d){
 					return d.name;
 				}))
 				.rangeRoundBands([width/4+70, 3*width/4 - 60], .1);
-			//console.log(Math.max.apply(null, revenueData));
 			var yScale = d3.scale.linear()
 				.domain([0, maxWords])
 				.range([3*height/4-30, graphPadding + 50]);
@@ -1354,11 +1287,6 @@
 	               	console.log(characterArray[d].name);
 	            });
 
-
-
-				// rectangles.on("mouseover", function(){
-	   //             		console.log(characterArray[i].name);
-	   //             	});
 	           };
 	             
 		});

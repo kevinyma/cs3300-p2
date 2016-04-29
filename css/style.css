@@ -179,9 +179,21 @@ h2 {
     left: 10px;
 }
 
+.roles-filters-alt {
+    position: absolute;
+    top: 300px;
+    left: 10px;
+}
+
 .restore-button-group {
     position: absolute;
     top: 540px;
+    left: 72px;
+}
+
+.restore-button-group-alt {
+    position: absolute;
+    top: 440px;
     left: 72px;
 }
 
@@ -203,6 +215,7 @@ h2 {
     position: absolute;
     top: 250px;
     left: 330px;
+    pointer-events: none;
 }
 
 .description {
@@ -402,7 +415,7 @@ h3 {
         position: absolute;           
         text-align: center;           
         width: 180px;                  
-        height: 270px;                 
+        /*height: 270px;      */           
         padding: 2px;             
         font: 10px sans-serif;        
         background: white;   
@@ -474,9 +487,10 @@ h3 {
         font-weight: 600;
         line-height: 11px;
         margin: 0px;
-        width: 60px;
         text-align: right;
-        margin-right: 2px;}
+        margin-right: 2px;
+        margin-left: 7px;
+    }
 
     .dataCrewGender{
         font-size: 9px;
