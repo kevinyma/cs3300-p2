@@ -7,8 +7,15 @@ body {
 
 p {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.24rem;
 }
+
+.textbox {
+    width: 500px;
+     font-size: 1.4rem;
+
+}
+
 
 .container {
     width: 972px;
@@ -26,9 +33,7 @@ h2 {
     font-family: "Merriweather";
 }
 
-.textbox {
-    width: 500px;
-}
+
 
 .introduction {
     margin-left: 10px;
@@ -74,7 +79,8 @@ h2 {
 }
 
 .border{
-    border: 1px solid rgba(127, 125, 156, 0.54);
+    border: 1px solid rgba(127, 125, 156, 0.54);    
+
 }
 
 .front-curve {
@@ -107,6 +113,25 @@ h2 {
     height: 25px;
     font-weight: 400;
     font-size: 1.2rem;
+}
+
+/*====================Active/Hover States====================*/
+.active {
+    background-color: #F5F5F5;
+    color: black;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+    border-color: #adadad;
+}
+
+.pages-filter > .active {
+    background-color: white;
+    color: black;
+    box-shadow: none;
+    border-color: none;
+}
+
+.pages-filter > .filter:hover {
+    color: black;
 }
 
 /*====================Page Filter Specific====================*/
@@ -150,13 +175,13 @@ h2 {
 
 .roles-filters {
     position: absolute;
-    top: 350px;
+    top: 380px;
     left: 10px;
 }
 
 .restore-button-group {
     position: absolute;
-    top: 500px;
+    top: 540px;
     left: 72px;
 }
 
@@ -181,7 +206,14 @@ h2 {
 }
 
 .description {
-    width: 220px;
+    width: 250px;
+    position: absolute;
+    top: 220px;
+    left: 10px;
+}
+
+.description-revenue {
+    width: 500px;
     position: absolute;
     top: 200px;
     left: 10px;
@@ -193,7 +225,9 @@ h2 {
 h3 {
     font-weight: 600;
     font-size: 1.4rem;
+
     margin: 0;
+    margin-bottom: 5px;
     padding: 0;
     font-family: 'Merriweather';
 }
@@ -294,24 +328,7 @@ h3 {
 }
 
 
-/*====================Active/Hover States====================*/
-.active {
-    background-color: #F5F5F5;
-    color: black;
-    box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
-    border-color: #adadad;
-}
 
-.pages-filter > .active {
-    background-color: white;
-    color: black;
-    box-shadow: none;
-    border-color: none;
-}
-
-.pages-filter > .filter:hover {
-    color: black;
-}
 
 /*====================Dropdown Year Filter====================*/
 .dropbtn {
@@ -389,10 +406,13 @@ h3 {
         padding: 2px;             
         font: 10px sans-serif;        
         background: white;   
-        border: 1px;      
-        border-radius: 3px; 
+        border: 1px solid rgba(127, 125, 156, 0.54);    
+        border-radius: 4px; 
         border-style: solid;          
-        pointer-events: none;}
+        pointer-events: none;
+        box-shadow: 1px 1px 3px 2px rgba(0,0,0,.125);
+ 
+    }
 
     .poster {
         height: 150px;
@@ -423,11 +443,12 @@ h3 {
 
     .nameLabel{
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 600;
         line-height: 15px;
         margin: 0px;
         width: 180px;
-        text-align: middle;}
+        text-align: middle;
+        font-family: 'Merriweather';}
 
     .dataLabel{
         font-size: 9px;

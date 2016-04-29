@@ -16,7 +16,7 @@
 <body>
 	<div class="container">
 		<div class="introduction">
-		<h2>Gender Dialogue in Film</h2>
+		<h2>Gender of Dialogue in Film</h2>
 		<p class="textbox">We compiled the number of words spoken by male and female characters across IMDB's top films of the past 15 years. We then compared the films by the genders of their creators. Here's what we found.</p>
 		</div>
 
@@ -105,7 +105,7 @@
 
 		<div class="description description-pie">
 			<h3>Male Dialogue Dominates</h3>
-			<p>There is a clear preference within Hollywood for male dominated films. Filtering by the gender of the crew memebers shows how few films have female crews. Changing the years shows this statistic has not improved over the last 15 years. </p>
+			<p class="smalltext">There is a clear preference within Hollywood for male dominated films. Filtering by the gender of the crew memebers shows how few films have female crews. Changing the years shows this statistic has not improved over the last 15 years. </p>
 		</div>
 
 		<div class="description description-histogram">
@@ -130,7 +130,6 @@
 		</div>
 	</div>
 	<script>
-	$(".statistics").hide();
 	$(".revenue").hide();
 
 	d3.selection.prototype.moveToBack = function() {  
@@ -153,7 +152,7 @@
 	}
 
 	var width = 970;
-	var height = 520;
+	var height = 600;
 	var graphPadding = 50;
 	var svg = d3.select("#plot").append("svg").attr("height", height).attr("width", width);
 	women = [];
@@ -769,9 +768,9 @@
 		    		return "red";
 		    	});
 		    popupPoster.attr("src", function(){ 
-		    	return d.poster_url})
+		    	return d.poster_url
+		    })
 		    	// .attr("width",
-
 
 			popupBox.transition()
 		        .duration(100)
@@ -779,7 +778,6 @@
 		    popupBox.style("left", (d3.event.pageX + 10) + "px")
 		            .style("top", (d3.event.pageY - 20)+ "px");
 		}
-
 
 
 		$(".histogram").click(function() {
@@ -790,8 +788,6 @@
 			applyFilters();
 			plotPiChart(filteredMen, filteredWomen, unfiltered);
 		});
-
-
 
 		//Set up charts elements to be hidden when changing graphs
 
@@ -995,7 +991,7 @@
 		{
 			d3.selectAll(".axis").style("opacity", 0);
 
-			var scatterMargin = {top: 30, right: 80, bottom: 30, left: 200};
+			var scatterMargin = {top: 200, right: 60, bottom: 30, left: 30};
 
 
 			//d3.selectAll(".axis").remove();
@@ -1041,7 +1037,7 @@
 			//console.log(Math.max.apply(null, revenueData));
 			var yScale = d3.scale.linear()
 				.domain([0, Math.max.apply(null, revenueData)])
-				.range([height-scatterMargin.bottom, graphPadding]);
+				.range([height-scatterMargin.bottom, scatterMargin.top]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat("");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
@@ -1052,16 +1048,12 @@
 				.style("opacity", 1);
 
 			//Put back in if we want a y axis	
-
 			yAxisStable.attr("transform", "translate(" + -5+ ",0)")
 				.call(yAxis)
 				.transition().delay(800)
 				.style("opacity", 0);
 
-
 			yAxisLabel.attr("x", 0).attr("y", 0).transition().delay(800).style("opacity", 0);	
-
-			
 
 				label1.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*0)
 				.attr("y", height-scatterMargin.bottom+25)
@@ -1083,7 +1075,6 @@
 				.transition().delay(800)
 				.style("opacity", 1);
 
-
 				label3.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*(2/4))
 				.attr("y", height-scatterMargin.bottom+25)
 				.attr("text-anchor","middle")
@@ -1092,8 +1083,6 @@
 				.style("font-weight", "bold")
 				.transition().delay(800)
 				.style("opacity", 1);	
-
-
 
 				label4.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*(3/4))
 				.attr("y", height-scatterMargin.bottom+25)
@@ -1104,7 +1093,6 @@
 				.style("font-weight", "bold")
 				.transition().delay(800)
 				.style("opacity", 1);
-
 
 				label5.attr("x", scatterMargin.left+(width-scatterMargin.left-scatterMargin.right)*1)
 				.attr("y", height-scatterMargin.bottom+25)
@@ -1125,8 +1113,8 @@
 					.attr("y2", yScale(Math.max.apply(null, revenueData)/4))
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
-					.attr("stroke-width", 2)
-					.attr("stroke-dasharray","10,10")
+					.attr("stroke-width", 1)
+					.attr("stroke-dasharray","4,4")
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
@@ -1152,8 +1140,8 @@
 					.attr("y2", yScale(Math.max.apply(null, revenueData)/2))
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
-					.attr("stroke-width", 2)
-					.attr("stroke-dasharray","10,10")
+					.attr("stroke-width", 1)
+					.attr("stroke-dasharray","4,4")
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
@@ -1179,8 +1167,8 @@
 					.attr("y2", yScale(3*Math.max.apply(null, revenueData)/4))
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
-					.attr("stroke-width", 2)
-					.attr("stroke-dasharray","10,10")
+					.attr("stroke-width", 1)
+					.attr("stroke-dasharray","4,4")
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
@@ -1206,8 +1194,8 @@
 					.attr("y2", yScale(Math.max.apply(null, revenueData)))
 					.attr("stroke", "black")
 					.attr("opacity", 0.5)
-					.attr("stroke-width", 2)
-					.attr("stroke-dasharray","10,10")
+					.attr("stroke-width", 1)
+					.attr("stroke-dasharray","4,4")
 					.attr("class", "histogramAxis");
 	
 				svg.append("text")
