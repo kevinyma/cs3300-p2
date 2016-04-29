@@ -60,7 +60,7 @@ h2 {
 
 .filter {
     cursor: pointer;
-    padding: 0 8px;
+    padding: 0 7px;
     margin-left: -3px;
     background: white;
     text-align: center;
@@ -74,9 +74,6 @@ h2 {
     font-size: 1.2rem;
 }
 
-.filter:hover {
-    background-color: #F5F5F5;
-}
 
 .border{
     border: 1px solid rgba(127, 125, 156, 0.54);    
@@ -102,7 +99,7 @@ h2 {
 
 .restore-button {
     cursor: pointer;
-    padding: 0 10px;
+    padding: 0 7px;
     margin-left: -3px;
     background: white;
     text-align: center;
@@ -114,6 +111,8 @@ h2 {
     font-weight: 400;
     font-size: 1.2rem;
 }
+
+
 
 /*====================Active/Hover States====================*/
 .active {
@@ -132,6 +131,14 @@ h2 {
 
 .pages-filter > .filter:hover {
     color: black;
+}
+
+.filter:hover {
+    background-color: #F5F5F5;
+}
+
+.restore-button:hover {
+    background-color: #F5F5F5;
 }
 
 /*====================Page Filter Specific====================*/
@@ -358,7 +365,7 @@ h3 {
 /*====================Dropdown Year Filter====================*/
 .dropbtn {
     cursor: pointer;
-    padding: 0 14px;
+    padding: 0 6px;
     margin-left: -3px;
     background: #ffffff;
     text-align: center;
@@ -377,6 +384,9 @@ h3 {
     border-bottom-right-radius: 5px;
 }
 
+#caret {
+    margin-left: 5;
+}
 
 /* Dropdown button on hover & focus */
 .dropbtn:hover, .dropbtn:focus {

@@ -55,7 +55,7 @@
 			<div class="filter-group year-filter">
 				<p class="filter-label">Year</p>
 				<button class="dropbtn" id="button" type="button" data-toggle="dropdown">All
-				<span class="caret"></span></button>
+				<span class="caret" id="caret"></span></button>
 				  <ul class="dropdown-menu">
 				    <a class="filter active" id = "All" href="#all">All</a>
 				    <a class = "filter" id = "2000" href="#zero">2000</a>
@@ -481,6 +481,7 @@
 
 		    	year = document.getElementById($('.year-filter').find('.active').attr("id")).innerHTML;
 		    	document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
+		    	$("#button").append("<span class=\"caret\" id=\"caret\"></span>");
 
 		    	//console.log(year);
 		    	applyFilters();
@@ -499,6 +500,7 @@
 			$('.dropdown-menu').children().removeClass('active');
 			$('#All').addClass('active');
 			document.getElementById("button").innerText = $('.year-filter').find('.active').attr('id');
+			$("#button").append("<span class=\"caret\" id=\"caret\"></span>");
 
 			directorGender = 'all';
 			producerGender = 'all';
