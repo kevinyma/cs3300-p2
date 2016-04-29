@@ -1299,6 +1299,25 @@
 				.transition().delay(800)
 				.attr("class", "axis")
 				.call(yAxis);
+				
+			svg.append("text")
+				.attr("x", width/2 -30)
+				.attr("y", 520)
+				.style("font-size", "12px")
+				.style("fill", "black")
+				.transition().delay(800)
+				.text("Characters")
+				.style("font-weight", "bold")
+				.attr("class", "axis")
+
+			svg.append("text")
+				.style("font-size", "12px")
+				.style("fill", "black")
+				.transition().delay(800)
+				.text("Total Words Spoken")
+				.style("font-weight", "bold")
+				.attr("transform", "translate(270," + (3*height/4 - 100) + "), rotate(270)")
+				.attr("class", "axis")
 
             console.log(characterArray.length);
 
@@ -1316,10 +1335,6 @@
 	               .attr("y", yScale(characterArray[i].words))
 	               .attr("width", xScale.rangeBand())
 	               .attr("height", 3*height/4 - 30 - yScale(characterArray[i].words));
-
-	            rectangle.on("mouseover", function(d){
-	               	console.log(characterArray[d].name);
-	            });
 
 	           };
 	             
