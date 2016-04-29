@@ -205,9 +205,11 @@ h2 {
 }
 
 .statistics {
-    width: 150px;
+    width: 265px;
+    height: 400px;
+    background-color: white;
     position: absolute;
-    top: 350px;
+    top: 250px;
     left: 700px;
 }
 
@@ -300,6 +302,7 @@ h3 {
 }
 
 .statistics-women-box {
+    margin-top: 160px;
     margin-bottom: 30px;
 }
 

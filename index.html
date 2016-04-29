@@ -262,6 +262,31 @@
 	var popupWriter = popupCrew.append("p")
         .attr("class","dataCrewGender")
         .text("");
+
+
+    var xAxisStable = svg.append("g");
+
+		xAxisStable.attr("transform", "translate(0,0)")
+			.attr("class", "axis");
+
+
+	var yAxisStable = svg.append("g");
+
+		yAxisStable.attr("transform", "translate(0,0)")
+		.attr("class", "axis");
+
+	var label1 = svg.append("text").text("100% Female Dialogue")
+			.style("opacity", 0);
+
+		var label2 = svg.append("text").text("75%")
+			.style("opacity", 0);
+		var label3 = svg.append("text").text("50% Male, 50% Female")
+			.style("opacity", 0);
+		var label4 = svg.append("text").text("75%")
+			.style("opacity", 0);
+		var label5 = svg.append("text").text("100% Male Dialogue")
+			.style("opacity", 0);
+
 	function outputUpdate(value) {
 		document.getElementById("enable").innerHTML = value;
 	}
@@ -484,6 +509,9 @@
 		});
 
 
+
+		
+
 		//men is an array of each object where men speak the most, and women is an array of each object where women speak the most
 		function plotPiChart(men, women, unfiltered){
 
@@ -494,6 +522,33 @@
 			svg.select(".outerCircle").remove();
 			svg.select(".innerCircle").remove();
 			svg.selectAll("line").style("stroke", null);
+
+			// var xScale = d3.scale.linear()
+			// 	.domain([0, 0])
+			// 	.range([0,0]);
+			// //console.log(Math.max.apply(null, revenueData));
+			// var yScale = d3.scale.linear()
+			// 	.domain([0, 0])
+			// 	.range([0,0]);
+
+			// var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat("");
+			// var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+
+			xAxisStable.attr("transform", "translate(0,-20)")
+				.transition().delay(800)
+				.style("opacity", 0);
+
+			yAxisStable.attr("transform", "translate(0,-20)")
+				.transition().delay(800)
+				.style("opacity", 0);	
+
+			label1.transition().delay(800).style("opacity",0);
+			label2.transition().delay(800).style("opacity",0);
+			label3.transition().delay(800).style("opacity",0);
+			label4.transition().delay(800).style("opacity",0);
+			label5.transition().delay(800).style("opacity",0);
+			$('.histogramAxis').attr('stroke','white');
+
 
 			var Theta = (women.length/(men.length+women.length))*2*Math.PI; 
 			var Radius = Math.sqrt(((men.length+women.length)/Math.PI+Math.sqrt(men.length+women.length)))*12 +Math.cos(Theta)*Math.cos(Theta)*10; //size of Pi Chart
@@ -738,32 +793,9 @@
 		});
 
 		//Set up charts elements to be hidden when changing graphs
-
 		var margin = {top: height/4, right: width/8, bottom: height/4, left: 3*width/8};
 
-		var xAxisStable = svg.append("g");
-
-		xAxisStable.attr("transform", "translate(0," + (height - margin.bottom) + ")")
-			.attr("class", "axis");
-
-
-		var yAxisStable = svg.append("g");
-
-		yAxisStable.attr("transform", "translate(" + margin.left + ",0)")
-				.attr("class", "axis");
-
-		var label1 = svg.append("text").text("100% Female Dialogue")
-			.style("opacity", 0);
-
-		var label2 = svg.append("text").text("75%")
-			.style("opacity", 0);
-		var label3 = svg.append("text").text("50% Male, 50% Female")
-			.style("opacity", 0);
-		var label4 = svg.append("text").text("75%")
-			.style("opacity", 0);
-		var label5 = svg.append("text").text("100% Male Dialogue")
-			.style("opacity", 0);
-
+		
 		var yAxisLabel = svg.append("text").text("Number of Films")
 			.style("opacity", 0);
 
@@ -860,7 +892,8 @@
 				.call(yAxis)
 				.transition().delay(800)
 				.style("opacity", 1)
-				;				
+				;	
+
 
 			yAxisLabel
 				// translates to a point (x,y) and rotates about that point
@@ -1074,7 +1107,6 @@
 					.attr("opacity", 0.5);
 
 				svg.append("text")
-
 					.attr("x", width-margin.right+70)
 					.attr("y", yScale(Math.max.apply(null, revenueData)/2)-5)
 					.style("font-size","1.2rem")
@@ -1084,7 +1116,6 @@
 					.attr("class", "histogramAxis");
 
 				svg.append("text")
-
 					.attr("x", width-margin.right+70)
 					.attr("y", yScale(Math.max.apply(null, revenueData)/2)+10)
 					.style("font-size","1.2rem")
